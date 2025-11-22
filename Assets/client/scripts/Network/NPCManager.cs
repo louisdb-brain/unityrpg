@@ -23,8 +23,9 @@ public class NPCManager : MonoBehaviour
             {
                 // Spawn capsule NPC
                 GameObject obj = Instantiate(npcPrefab);
-                NPCController ctrl = obj.AddComponent<NPCController>();
-                ctrl.Init(npc.id);
+                NPCController ctrl = obj.GetComponent<NPCController>();
+
+                ctrl.Init(npc.id,npc.npcType,npc.level);
 
                 npcs[npc.id] = ctrl;
             }
