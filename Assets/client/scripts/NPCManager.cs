@@ -7,9 +7,10 @@ public class NPCManager : MonoBehaviour
     public GameObject npcPrefab;
 
     private Dictionary<string, NPCController> npcs = new();
+    public List<Transform> AllNPCs = new List<Transform>();
 
     void Awake() => Instance = this;
-
+    
     // ----------------------------------
     // NPC POSITION UPDATES
     // ----------------------------------
@@ -23,6 +24,7 @@ public class NPCManager : MonoBehaviour
             {
                 // Spawn capsule NPC
                 GameObject obj = Instantiate(npcPrefab);
+                AllNPCs.Add(obj.transform);
                 NPCController ctrl = obj.GetComponent<NPCController>();
 
                 ctrl.Init(npc.id,npc.npcType,npc.level);

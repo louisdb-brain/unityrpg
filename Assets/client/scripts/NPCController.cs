@@ -24,6 +24,12 @@ public class NPCController : MonoBehaviour
 
     // === Animation (optional) ===
     public Animator anim;
+    
+    private Vector3 prevPos;
+    private Vector3 nextPos;
+    private float lerpTimer = 0f;
+    private float lerpDuration = 0.1f; // match server tick rate
+
 
     void Start()
     {
@@ -40,66 +46,43 @@ public class NPCController : MonoBehaviour
     // Called by NPCManager when network packet arrives
     public void NetworkUpdate(NPCPacket data)
     {
-        // Update target position
-        targetPosition = new Vector3(
-            data.position.x,
-            data.position.y,
-            data.position.z
-        );
+        // Store old -> new positions
+        prevPos = transform.position;
+        nextPos = new Vector3(data.position.x, data.position.y, data.position.z);
 
-        // Update type & level
+        // Reset interpolation
+        lerpTimer = 0f;
+
+        // Type, level, health
         npcType = data.npcType;
         level = data.level;
-
-        // Update health
         health = data.health;
-
-        // damage flash
-        if (data.health < maxHealth)
-            hitFlashTimer = damageFlashDuration;
     }
+
 
 
     void Update()
     {
         float delta = Time.deltaTime;
 
-        // --- 1) Move smoothly toward target ---
-        Vector3 direction = targetPosition - transform.position;
-        float distance = direction.magnitude;
+        // Interpolation timer
+        lerpTimer += delta;
+        float t = Mathf.Clamp01(lerpTimer / lerpDuration);
 
-        if (distance > 0.05f)
+        // Interpolate position
+        transform.position = Vector3.Lerp(prevPos, nextPos, t);
+
+        // Rotate toward movement direction (optional)
+        Vector3 direction = nextPos - prevPos;
+        if (direction.sqrMagnitude > 0.001f)
         {
-            Vector3 step = direction.normalized * speed * delta;
-            transform.position += step;
-
-            // Rotate
-            if (step != Vector3.zero)
-            {
-                Quaternion targetRot = Quaternion.LookRotation(step);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 10f * delta);
-            }
-
-            if (anim) anim.SetBool("Moving", true);
-        }
-        else
-        {
-            if (anim) anim.SetBool("Moving", false);
+            Quaternion targetRot = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, t);
         }
 
-        // --- 2) Damage flash ---
-        if (hitFlashTimer > 0)
-        {
-            hitFlashTimer -= delta;
-
-            // Flash visual (optional)
-            // Example: change material color
-            // meshRenderer.material.color = Color.red;
-        }
-
-        // --- 3) Health bar ---
         UpdateHealthbar();
     }
+
 
     void UpdateHealthbar()
     {
