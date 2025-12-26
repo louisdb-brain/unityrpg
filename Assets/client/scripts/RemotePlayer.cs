@@ -2,11 +2,13 @@ using UnityEngine;
 
 public class RemotePlayer : PlayerBase
 {
+    public string socketId; 
     private Vector3 targetPos;
     private float targetAngle;
 
     public float lerpSpeed = 10f;
 
+   
     public override void OnNetworkUpdate(Vector3 pos, float angle)
     {
         targetPos = pos;

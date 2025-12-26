@@ -4,7 +4,20 @@ using NativeWebSocket;
 
 public class NetworkClient : MonoBehaviour
 {
+    public static NetworkClient Instance; 
+    
     private WebSocket ws;
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     async void Start()
     {
@@ -21,6 +34,18 @@ public class NetworkClient : MonoBehaviour
         await ws.Connect();
         Debug.Log("Connected to server!");
     }
+    public async void Send(string type, object data)
+    {
+        NetworkPacket packet = new NetworkPacket
+        {
+            type = type,
+            data = data
+        };
+
+        string json = JsonUtility.ToJson(packet);
+        await ws.SendText(json);
+    }
+
 
 
     void Update()

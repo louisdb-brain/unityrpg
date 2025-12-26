@@ -4,7 +4,14 @@ public static class NetworkMessageRouter
 {
     public static void Handle(string json)
     {
+        
+        Debug.Log("RAW JSON: " + json);
+
         var packet = JsonUtility.FromJson<ServerPacket>(json);
+        Debug.Log("PACKET IS NULL? " + (packet == null));
+
+        if (packet != null)
+            Debug.Log("PACKET TYPE: " + packet.type);
 
         switch (packet.type)
         {
@@ -19,8 +26,24 @@ public static class NetworkMessageRouter
             case "npc-kill":
                 NPCManager.Instance.OnNPCKill(packet.data);
                 break;
+            case "socket-id":
+            {
+                if (PlayerManager.Instance == null)
+                {
+                    Debug.LogError("PlayerManager not initialized yet!");
+                    return;
+                }
+
+                
+                var p = JsonUtility.FromJson<PlayerPacket>(packet.data);
+                PlayerManager.Instance.localPlayerId = p.id;
+                Debug.Log("socket-id received, create-player sent");
+                NetworkClient.Instance.Send("create-player", new EmptyData());
+                break;
+            }
             case "spawn-player":
             {
+                Debug.Log(" player spawn received");
                 PlayerPacket p = JsonUtility.FromJson<PlayerPacket>(packet.data);
                 PlayerManager.Instance.SpawnPlayer(p.id, new Vector3(p.x, p.y, p.z));
                 break;

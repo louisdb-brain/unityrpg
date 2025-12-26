@@ -1,6 +1,9 @@
 import { gamestateClass } from "./server_gamestate.js";
 import { WebSocketServer } from "ws";
 import {npc} from "./npc.js";
+import {playermanager} from "./playermanager.js";
+import crypto from "crypto";
+
 
 
 // --------------------
@@ -11,8 +14,13 @@ const wss = new WebSocketServer({ port: 3000 });
 // --------------------------
 // NETWORK INTERFACE (REPLACES io.emit)
 // --------------------------
+function normalizeData(data) {
+    // Your Unity client expects `data` to be a JSON string.
+    return (typeof data === "string") ? data : JSON.stringify(data);
+}
+
 function broadcast(type, data) {
-    const msg = JSON.stringify({ type, data });
+    const msg = JSON.stringify({ type, data: normalizeData(data) });
     wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
             client.send(msg);
@@ -22,9 +30,10 @@ function broadcast(type, data) {
 
 function sendTo(ws, type, data) {
     if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type, data }));
+        ws.send(JSON.stringify({ type, data: normalizeData(data) }));
     }
 }
+
 
 const net = { broadcast, sendTo };
 
@@ -50,21 +59,34 @@ gamestate.addnpc(goblin);
 // CLIENT CONNECTION HANDLER
 // --------------------
 wss.on("connection", (ws) => {
-    console.log("Player connected");
+    ws.id = crypto.randomUUID(); // ✅ create authoritative id
+    console.log("Player connected "+ws.id);
 
-    sendTo(ws, "welcome", { msg: "hello from server!" });
-
+    sendTo(ws, "socket-id", JSON.stringify({ id: ws.id }));
     ws.on("message", (raw) => {
         try {
-            const msg = JSON.parse(raw);
+            let text;
+
+            if (Buffer.isBuffer(raw)) {
+                text = raw.toString("utf8");
+            } else if (raw instanceof ArrayBuffer) {
+                text = new TextDecoder().decode(raw);
+            } else {
+                text = raw.toString();
+            }
+
+            const msg = JSON.parse(text);
             handleClientMessage(ws, msg);
+
         } catch (err) {
-            console.error("Invalid message from client:", raw.toString());
+            console.error("Invalid message from client:", err);
         }
     });
 
+
     ws.on("close", () => {
         console.log("Player disconnected");
+        net.broadcast("player-left", { id: ws.id });
     });
 });
 
@@ -73,6 +95,22 @@ wss.on("connection", (ws) => {
 // --------------------
 function handleClientMessage(ws, msg) {
     switch (msg.type) {
+        case "create-player":
+            // server decides the ID
+            playermanager.addPlayer(
+                ws.id,
+                0,                    // level
+                (type, data) => sendTo(ws, type, data)
+            );
+
+            net.broadcast("spawn-player", {
+                id: ws.id,
+                x: 0,
+                y: 0,
+                z: 0
+            });
+            console.log("data sent player spawned")
+            break;
 
         case "move":
             // TODO integrate with playermanager
@@ -80,13 +118,13 @@ function handleClientMessage(ws, msg) {
 
         case "chat":
             net.broadcast("chat", {
-                id: ws.id,    // you’ll replace this with your player id later
+                id: ws.id,
                 message: msg.data
             });
             break;
 
         case "spellcast":
-            gamestate.castSpell(msg.data);
+            gamestate.spellManager.castSpell(ws.id,msg.data);
             break;
 
         default:
