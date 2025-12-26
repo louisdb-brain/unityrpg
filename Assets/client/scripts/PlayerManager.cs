@@ -49,6 +49,11 @@ public class PlayerManager : MonoBehaviour
 
         Debug.Log($"Spawned {(isLocal ? "local" : "remote")} player: {id}");
     }
+    public bool HasPlayer(string id)
+    {
+        return players.ContainsKey(id);
+    }
+
 
     // ===========================================
     // POSITION / MOVEMENT UPDATES

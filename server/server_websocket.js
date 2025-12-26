@@ -112,9 +112,26 @@ function handleClientMessage(ws, msg) {
             console.log("data sent player spawned")
             break;
 
-        case "move":
-            // TODO integrate with playermanager
+        case "player-move": {
+            if (!msg.data) {
+                console.warn("player-move missing data", msg);
+                return;
+            }
+
+            const { x, y, z, angle } = JSON.parse(msg.data);
+
+            const player = playermanager.getPlayer(ws.id);
+            if (!player) return;
+
+            player.position.set(x, y, z);
+            player.targetPosition.set(x,y,z);
+            player.angle = angle;
+            console.log("player position", x, y, z);
+            console.log(player.position)
+
             break;
+        }
+
 
         case "chat":
             net.broadcast("chat", {

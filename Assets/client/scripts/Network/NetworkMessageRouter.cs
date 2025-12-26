@@ -49,12 +49,37 @@ public static class NetworkMessageRouter
                 break;
             }
 
-            case "player-update":
+            case "player-positionupdate":
             {
-                PlayerPacket p = JsonUtility.FromJson<PlayerPacket>(packet.data);
-                PlayerManager.Instance.UpdatePlayerPos(p.id, new Vector3(p.x, p.y, p.z), p.angle);
+                PlayerStatePacket[] states =
+                    JsonHelper.FromJson<PlayerStatePacket>(packet.data);
+
+                foreach (var p in states)
+                {
+                    //  Never auto-spawn local player
+                    if (p.id == PlayerManager.Instance.localPlayerId)
+                        continue;
+
+                    // ✅ Spawn remote player if missing
+                    if (!PlayerManager.Instance.HasPlayer(p.id))
+                    {
+                        PlayerManager.Instance.SpawnPlayer(
+                            p.id,
+                            p.pos.ToUnity()
+                        );
+                    }
+
+                    
+                    PlayerManager.Instance.UpdatePlayerPos(
+                        p.id,
+                        p.pos.ToUnity(),
+                        p.angle
+                    );
+                }
+
                 break;
             }
+
 
             case "player-left":
             {

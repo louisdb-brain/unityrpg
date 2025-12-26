@@ -2,5 +2,5 @@
 public class NetworkPacket
 {
     public string type;
-    public object data;
+    public string data;
 }

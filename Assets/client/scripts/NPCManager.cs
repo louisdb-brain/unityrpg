@@ -14,6 +14,7 @@ public class NPCManager : MonoBehaviour
     // ----------------------------------
     // NPC POSITION UPDATES
     // ----------------------------------
+    
     public void OnNPCUpdate(string json)
     {
         NPCPacket[] list = JsonHelper.FromJson<NPCPacket>(json);

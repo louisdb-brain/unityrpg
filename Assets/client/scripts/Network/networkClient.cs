@@ -34,17 +34,19 @@ public class NetworkClient : MonoBehaviour
         await ws.Connect();
         Debug.Log("Connected to server!");
     }
-    public async void Send(string type, object data)
+    public async void Send(string type, object payload)
     {
         NetworkPacket packet = new NetworkPacket
         {
             type = type,
-            data = data
+            data = payload != null ? JsonUtility.ToJson(payload) : "{}"
         };
 
         string json = JsonUtility.ToJson(packet);
+        
         await ws.SendText(json);
     }
+
 
 
 

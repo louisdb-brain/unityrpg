@@ -47,10 +47,10 @@ export class gamestateClass {
     tick(delta) {
         if (!this.maps[1]) return;
 
-        //playermanager.update(delta);
+        playermanager.update(delta);
         this.npcManager.update(delta);
         this.emitNpc();
-        //this.emitPlayers();
+        this.emitPlayers();
         //this.objectManager.update(delta);
         //this.emitNodes();
 
