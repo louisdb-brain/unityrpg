@@ -87,6 +87,25 @@ public static class NetworkMessageRouter
                 PlayerManager.Instance.RemovePlayer(p.id);
                 break;
             }
+            case "spell-spawn":
+                SpellManager.Instance.SpawnSpell(
+                    JsonUtility.FromJson<SpellSpawnPacket>(packet.data)
+                );
+                break;
+
+            case "spell-update":
+                SpellManager.Instance.UpdateSpell(
+                    JsonUtility.FromJson<SpellUpdatePacket>(packet.data)
+                );
+                break;
+
+            case "spell-despawn":
+                SpellManager.Instance.DespawnSpell(
+                    JsonUtility.FromJson<SpellDespawnPacket>(packet.data)
+                );
+                break;
+
+
 
 
     

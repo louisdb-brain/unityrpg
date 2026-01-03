@@ -12,8 +12,8 @@ export class skillNode {
         this.emitCallback=emitCallback;
         this.socketCallback=socketCallback;
         this.spawnCallback=spawnCallback;
-        this.emitNode();
         this.level=level;
+        this.emitNode();
     }
     emitNode() {
         const payload={

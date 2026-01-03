@@ -106,9 +106,5 @@ public class NPCController : MonoBehaviour
         UpdateHealthbar();
     }
 
-    public void Die()
-    {
-        // Play dissolve / particle / etc
-        Destroy(gameObject);
-    }
+    
 }

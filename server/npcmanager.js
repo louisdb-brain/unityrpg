@@ -1,20 +1,18 @@
-import {npc} from "./npc.js";
-import {playermanager} from "./playermanager.js";
-import {objectManager} from "./dynamicObjectsManager.js";
-import {loot} from "./loot.js";
-import {QuestGiver} from "./questgiver.js";
-
+import { npc } from "./npc.js";
+import { playermanager } from "./playermanager.js";
+import { objectManager } from "./dynamicObjectsManager.js";
+import { loot } from "./loot.js";
+import { QuestGiver } from "./questgiver.js";
 
 export class npcManager {
-    constructor(objectmanager,io) {
-        this.spawnCallback=null;
-        this.npcs= {};
-        this.objectmanager=objectmanager;
-        this.io=io;
+    constructor(objectmanager, net) {
+        this.spawnCallback = null;
+        this.npcs = {};
+        this.objectmanager = objectmanager;
+        this.net = net;
         this.respawnQueue = {};
-
-
     }
+
     update(delta) {
         const npcs = Object.values(this.npcs);
         const players = playermanager.getAllPlayers();
@@ -22,95 +20,90 @@ export class npcManager {
         this.updateRespawns();
 
         for (const npc of npcs) {
-            // Skip invalid or destroyed NPCs safely
             if (!npc) {
                 console.warn("⚠️ Skipping undefined NPC entry in npcManager");
                 continue;
             }
 
             if (npc._destroyed) {
-                console.log(`🪦 Skipping destroyed NPC: ${npc.name} (${npc.npcid})`);
+                this.removeNPC(npc);
                 continue;
             }
 
             try {
-                npc.update(delta, players,npcs);
+                npc.update(delta, players, npcs);
             } catch (err) {
                 console.error(`💥 Error updating NPC '${npc.name}' (${npc.npcid}):`, err);
             }
         }
     }
 
+
+
     addNpc(pNPC) {
-        if(!this.npcs[pNPC.npcid]){
-            this.npcs[pNPC.npcid]=pNPC;
+        if (!this.npcs[pNPC.npcid]) {
+            this.npcs[pNPC.npcid] = pNPC;
         }
     }
-    getNpcList(){
+
+    getNpcList() {
         return this.npcs;
     }
+
     removeNPC(npcOrId) {
-        const id = typeof npcOrId === 'string' ? npcOrId : npcOrId.npcid;
-        const npc = this.npcs[id];
-        if (!npc) return;
+        const id = typeof npcOrId === "string" ? npcOrId : npcOrId.npcid;
+        const npcInstance = this.npcs[id];
+        if (!npcInstance) return;
 
-        console.log(`Removing NPC ${id} and adding it to the queue` );
-        this.respawnQueue[npc.npcid]={
-            id:npc.npcid,
-            name:npc.name,
-            io:npc.io,
-            destroynpcmethod:npc.destroynpcmethod,
-            spawnCallback:npc.spawnCallback,
-            loot:npc.loot,
-            level:npc.level,
-            respawnTime: Date.now() + 200  // 1 minute
+        console.log(`Removing NPC ${id} and adding it to the queue`);
+
+        this.respawnQueue[npcInstance.npcid] = {
+            id: npcInstance.npcid,
+            name: npcInstance.name,
+            loot: npcInstance.loot,
+            level: npcInstance.level,
+            respawnTime: Date.now() + 200
         };
-        delete this.npcs[id];
 
+        delete this.npcs[id];
     }
+
     updateRespawns() {
         const now = Date.now();
-        if(Object.keys(this.respawnQueue).length === 0){}
+        if (Object.keys(this.respawnQueue).length === 0) {}
 
         for (const npcid in this.respawnQueue) {
             const data = this.respawnQueue[npcid];
 
             if (data.respawnTime <= now) {
                 if (this.npcs[npcid]) {
-                    console.warn(`⚠️ Tried to respawn NPC ${npcid}, but it already exists! Skipping.`);
+                    console.warn(
+                        `⚠️ Tried to respawn NPC ${npcid}, but it already exists! Skipping.`
+                    );
                     delete this.respawnQueue[npcid];
-                    continue; // skip to next entry
+                    continue;
                 }
 
                 console.log(`✨ Respawning NPC ${npcid}`);
 
-                //  Recreate NPC using the same callbacks and drops
                 const newNpc = new npc(
                     data.id,
-                    {x:0,y:0,z:0},
+                    { x: 0, y: 0, z: 0 },
                     data.name,
-                    this.io,
-                    (npc)=>this.removeNPC(npc),   // ✅ fresh onDestroy
-                    this.spawnCallback,
+                    this.net,
                     data.loot,
                     data.level
                 );
+
                 console.log(newNpc);
 
                 this.addNpc(newNpc);
-
                 delete this.respawnQueue[npcid];
             }
         }
     }
 
-
-
-    getNpc(pID)
-    {
+    getNpc(pID) {
         return this.npcs[pID];
     }
-
-
-
 }

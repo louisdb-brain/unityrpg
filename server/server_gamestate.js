@@ -20,9 +20,9 @@ export class gamestateClass {
         this.spellManager = new SpellManager(
             this.npcManager,
             playermanager,
-            "placeholdersocketid",
             this.net
         );
+
 
         this.onNpcUpdate = null;
     }
@@ -47,6 +47,7 @@ export class gamestateClass {
     tick(delta) {
         if (!this.maps[1]) return;
 
+        this.spellManager.update(delta);
         playermanager.update(delta);
         this.npcManager.update(delta);
         this.emitNpc();

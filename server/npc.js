@@ -3,7 +3,7 @@ import { toVec3 } from "./utilities.js";
 import * as THREE from "three";
 
 export class npc {
-    constructor(pNpcID, positionObj, pName, net, onDestroy, spawnCallback, loot, level) {
+    constructor(pNpcID, positionObj, pName, net, loot, level) {
         this.net = net;
         this.npcid = pNpcID;
 
@@ -19,7 +19,6 @@ export class npc {
         this.hitboxRadius = 1.5;
 
         this.detectionsphere = new THREE.Sphere(this.position, this.detectionRadius);
-        this.onDestroy = onDestroy;
 
         this.hitTime = 0;
         this.hitTimer = 13;
@@ -27,7 +26,6 @@ export class npc {
         this.attackspeed = 3;
         this.loot = loot;
         this.rareloot = "mithrilsword";
-        this.spawnCallback = spawnCallback;
 
         this.cooldown = 50;
         this.targetPosition = this.position.clone();
@@ -39,6 +37,7 @@ export class npc {
         this.decisiontreshhold = 20;
 
         this.angle = 0;
+        this._destroyed = false;
     }
 
     update(delta, playersIgnored, allNpcs) {
@@ -49,7 +48,7 @@ export class npc {
         this.aiupdate(delta);
 
         // FOLLOW PLAYER → DISABLED
-        // this.checkFollow(playersIgnored);
+        this.checkFollow(playersIgnored);
 
         // COMBAT → DISABLED
         // this.handleCombat(playersIgnored);
@@ -81,7 +80,7 @@ export class npc {
     }
 
     // FOLLOWING PLAYERS — DISABLED
-    /*
+
     checkFollow(players) {
         for (const id in players) {
             const player = players[id];
@@ -94,7 +93,6 @@ export class npc {
         }
         this.targetPlayerId = null;
     }
-    */
 
     checkAvoid(allNpcs) {
         let avoid = new THREE.Vector3(0, 0, 0);
@@ -162,16 +160,20 @@ export class npc {
     */
 
     takeDamage(amount) {
+        if (this._destroyed) return;
+
         this.health -= amount;
         this.hitTime = this.hitTimer;
 
         // Broadcast damage
-        this.net.broadcast("npc-takedamage", {
-            id: this.npcid,
-            name: this.name,
-            amount,
-            health: this.health
-        });
+        if (this.net) {
+            this.net.broadcast("npc-takedamage", {
+                id: this.npcid,
+                name: this.name,
+                amount,
+                health: this.health
+            });
+        }
 
         if (this.health <= 0) this.destroy();
     }
@@ -182,14 +184,14 @@ export class npc {
         this.targetPlayerId = null;
 
         const lootId = `${this.name}_loot_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
-        this.spawnCallback(lootId, this.loot, this.position, this.level);
+        if (this.loot && typeof this.loot.spawn === "function") {
+            this.loot.spawn(lootId, this.position, this.level);
+        }
 
         console.log(`NPC ${this.name} (${this.npcid}) destroyed`);
 
-        this.net.broadcast("npc-kill", { id: this.npcid, name: this.name });
-
-        if (typeof this.onDestroy === "function") {
-            this.onDestroy(this);
+        if (this.net) {
+            this.net.broadcast("npc-kill", { id: this.npcid, name: this.name });
         }
     }
 }

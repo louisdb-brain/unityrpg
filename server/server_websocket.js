@@ -48,8 +48,6 @@ const goblin = new npc(
     { x: 0, y: 0, z: 0 },
     "goblin",
     null,
-    () => {},
-    () => {},
     "loot",
     1
 );
@@ -141,7 +139,9 @@ function handleClientMessage(ws, msg) {
             break;
 
         case "spellcast":
+            console.log("cast spell "+msg.data.id)
             gamestate.spellManager.castSpell(ws.id,msg.data);
+
             break;
 
         default:

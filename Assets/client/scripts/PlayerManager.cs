@@ -87,4 +87,15 @@ public class PlayerManager : MonoBehaviour
 
         Debug.Log($"Removed player: {id}");
     }
+    public LocalPlayer GetLocalPlayer()
+    {
+        if (string.IsNullOrEmpty(localPlayerId))
+            return null;
+
+        if (!players.TryGetValue(localPlayerId, out var player))
+            return null;
+
+        return player as LocalPlayer;
+    }
+
 }

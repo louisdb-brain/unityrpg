@@ -11,3 +11,16 @@ public class NPCPacket
     public float angle;
     public int health;
 }
+
+[System.Serializable]
+public class NPCKillPacket
+{
+    public string id;
+}
+
+[System.Serializable]
+public class NPCDamagePacket
+{
+    public string id;
+    public int amount;
+}

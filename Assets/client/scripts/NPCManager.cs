@@ -5,10 +5,11 @@ public class NPCManager : MonoBehaviour
 {
     public static NPCManager Instance;
     public GameObject npcPrefab;
+    public GameObject bloodPrefab;
 
     private Dictionary<string, NPCController> npcs = new();
     public List<Transform> AllNPCs = new List<Transform>();
-
+    
     void Awake() => Instance = this;
     
     // ----------------------------------
@@ -45,11 +46,21 @@ public class NPCManager : MonoBehaviour
     {
         var dmg = JsonUtility.FromJson<NPCDamagePacket>(json);
 
-        if (npcs.TryGetValue(dmg.id, out var npc))
+        if (!npcs.TryGetValue(dmg.id, out var npc))
+            return;
+
+        npc.TakeDamage(dmg.amount);
+
+        if (DamagePopupSpawner.Instance != null)
         {
-            npc.TakeDamage(dmg.amount);
+            DamagePopupSpawner.Instance.Spawn(
+                npc.transform.position,
+                dmg.amount
+            );
         }
     }
+
+
 
     // ----------------------------------
     // NPC KILL
@@ -58,10 +69,29 @@ public class NPCManager : MonoBehaviour
     {
         var dead = JsonUtility.FromJson<NPCKillPacket>(json);
 
-        if (npcs.TryGetValue(dead.id, out var npc))
+        if (!npcs.TryGetValue(dead.id, out var npc))
+            return;
+
+        Vector3 deathPos = npc.transform.position;
+
+        // Spawn blood effect
+        if (bloodPrefab != null)
         {
-            npc.Die();
-            npcs.Remove(dead.id);
+            GameObject blood = Instantiate(
+                bloodPrefab,
+                deathPos,
+                Quaternion.identity
+            );
+
+            Destroy(blood, 3f);
         }
+
+        // Remove from lists
+        AllNPCs.Remove(npc.transform);
+        npcs.Remove(dead.id);
+
+        // Destroy NPC GameObject
+        Destroy(npc.gameObject);
     }
+
 }
