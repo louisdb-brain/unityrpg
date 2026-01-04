@@ -104,6 +104,20 @@ public static class NetworkMessageRouter
                     JsonUtility.FromJson<SpellDespawnPacket>(packet.data)
                 );
                 break;
+            case "loot-spawn":
+            {
+                var data = JsonUtility.FromJson<LootSpawnPacket>(packet.data);
+                ClientLootManager.Instance.SpawnLoot(data);
+                break;
+            }
+
+            case "loot-picked":
+            {
+                var data = JsonUtility.FromJson<LootPickedPacket>(packet.data);
+                ClientLootManager.Instance.RemoveLoot(data.id);
+                break;
+            }
+
 
 
 

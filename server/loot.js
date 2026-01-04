@@ -1,29 +1,22 @@
-export class loot{
-    constructor(itemID,name,level,location={x:0,y:0,z:0},emitCallback)
-    {
-        this.itemID=itemID;
-        this.itemID = itemID;
+export class loot {
+    constructor(id, name, level, position, net) {
+        this.id = id;
         this.name = name;
-        this.location = { ...location };
-        this.emit=emitCallback;
-        this.level=level;
-        this.emitloot();
+        this.level = level;
+        this.position = { ...position };
+        this.net = net;
 
-
-
+        this.broadcastSpawn();
     }
-    emitloot(){
-        const payload={
 
-            id:this.itemID,
-            name:this.name,
-            location:this.location,
-            level:this.level
-        }
-        this.emit('newloot',payload);
+    broadcastSpawn() {
+        if (!this.net) return;
+
+        this.net.broadcast("loot-spawn", {
+            id: this.id,
+            itemName: this.name,
+            position: this.position,
+            level: this.level
+        });
     }
-    pickup(){
-    }
-    deteriorate()
-    {}
 }

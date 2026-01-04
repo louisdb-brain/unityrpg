@@ -2,6 +2,7 @@ import { gamestateClass } from "./server_gamestate.js";
 import { WebSocketServer } from "ws";
 import {npc} from "./npc.js";
 import {playermanager} from "./playermanager.js";
+import { dynamicObjectsManager } from "./dynamicObjectsManager.js";
 import crypto from "crypto";
 
 
@@ -47,8 +48,9 @@ const goblin = new npc(
     "goblin_1",
     { x: 0, y: 0, z: 0 },
     "goblin",
-    null,
-    "loot",
+    net,
+    gamestate,
+    "butter",
     1
 );
 
@@ -143,6 +145,32 @@ function handleClientMessage(ws, msg) {
             gamestate.spellManager.castSpell(ws.id,msg.data);
 
             break;
+        case "loot-spawn-request": {
+            const data = typeof msg.data === "string"
+                ? JSON.parse(msg.data)
+                : msg.data;
+
+            if (gamestate.objectManager.loot[data.id]) return;
+
+            gamestate.objectManager.spawnLoot(
+                data.id,
+                data.itemName,
+                data.position,
+                data.level ?? 1
+            );
+            break;
+        }
+        case "loot-pickup": {
+            const data = typeof msg.data === "string"
+                ? JSON.parse(msg.data)
+                : msg.data;
+
+            gamestate.objectManager.pickupLoot(
+                data.id,
+                ws.id
+            );
+            break;
+        }
 
         default:
             console.warn("Unknown message type:", msg.type);

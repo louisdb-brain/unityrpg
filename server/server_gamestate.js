@@ -1,7 +1,7 @@
 import { npcManager } from "./npcmanager.js";
 import * as THREE from 'three';
 import { playermanager } from "./playermanager.js";
-import { objectManager } from "./dynamicObjectsManager.js";
+import { dynamicObjectsManager } from "./dynamicObjectsManager.js";
 import { SpellManager } from "./spellmanager.js";
 
 export class gamestateClass {
@@ -15,7 +15,7 @@ export class gamestateClass {
         this.maps = {};
         this.maps[1] = true;
 
-        this.objectManager = new objectManager();
+        this.objectManager = new dynamicObjectsManager();
         this.npcManager = new npcManager(this.objectManager, this.net);
         this.spellManager = new SpellManager(
             this.npcManager,

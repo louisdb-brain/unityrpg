@@ -1,77 +1,71 @@
-import {playermanager} from "./playermanager.js";
+import { loot } from "./loot.js";
+import { playermanager } from "./playermanager.js";
 
-export class objectManager{
-    constructor() {
-        this.chests={}
-        this.loot={};
-        this.nodes={};
+export class dynamicObjectsManager {
+    constructor(net) {
+        this.net = net;
+        this.loot = {};
+        this.chests = {};
+        this.nodes = {};
     }
-    update(delta) {
-        for (const chest of Object.values(this.chests)) {
-            chest.update(delta);
-        }
+
+    // =========================
+    // LOOT
+    // =========================
+
+    spawnLoot(id, itemName, position, level = 1) {
+        if (this.loot[id]) return; // dedupe safety
+
+        const lootObj = new loot(
+            id,
+            itemName,
+            level,
+            position,
+            this.net
+        );
+
+        this.loot[id] = lootObj;
     }
-    addNode(node,level) {
-        if(!this.nodes[node.name]) {
-            this.nodes[node.name] = node;
-            this.nodes[node.name].level=level;
-        }
-    }
-    clickNode(id,player) {
-        if(this.nodes[id]){
-            this.nodes[id].click(player);
-        }else {
-            console.log("no nodes with id: "+id);
-        }
-    }
-    addloot(loot, id) {
-        let thisId = id;
-        if (!this.loot[thisId]) {
-            console.log("[ADDLOOT] Storing new loot:", thisId);
-            this.loot[thisId] = loot;
-        } else {
-            console.warn("[ADDLOOT] Loot with ID already exists:", thisId);
-        }
-    }
-    getloot(id){
-        return this.loot[id];
-    }
-    getNode(name){
-        return this.nodes[name];
-    }
-    lootObject(id, socketid) {
-        console.log("[DEBUG] lootObject called with id:", id, "by", socketid);
-        const lootObj = this.getloot(id);
-        if (!lootObj) {
-            console.warn("[WARN] Loot not found for ID:", id);
-            return;
-        }
-        console.log("[DEBUG] lootObj.name:", lootObj.name);
+
+    pickupLoot(id, socketid) {
+        const lootObj = this.loot[id];
+        if (!lootObj) return;
+
         playermanager.additem(socketid, lootObj.name);
-        this.removeloot(id);
-    }
-
-    removeloot(id){
         delete this.loot[id];
-    }
-    addChest(pChest,id) {
-        let thisId=id;
-        if (this.chests[thisId]) {
-            const length = Object.keys(this.chests).length;
-            thisId=length+1;
-        }
-        if(!this.chests[thisId]){
-            this.chests[thisId]=pChest;
-            console.log("chest"+thisId);
-        }
-        console.log("tried to add chest");
 
+        this.net.broadcast("loot-picked", { id });
     }
-    getChest(pId){
-        return this.chests[pId];
+
+    // =========================
+    // CHESTS
+    // =========================
+
+    addChest(chest, id) {
+        const chestId = id ?? chest.id;
+        if (!chestId || this.chests[chestId]) return;
+        this.chests[chestId] = chest;
     }
-    getChestdict()
-    {
-        return this.chests;
+
+    openChest(id, socketid) {
+        const chest = this.chests[id];
+        if (!chest) return;
+        chest.open(socketid, this);
+    }
+
+    // =========================
+    // NODES
+    // =========================
+
+    addNode(node, id) {
+        const nodeId = id ?? node.id;
+        if (!nodeId || this.nodes[nodeId]) return;
+        this.nodes[nodeId] = node;
+    }
+
+    clickNode(id, socketid) {
+        const node = this.nodes[id];
+        if (!node) return;
+        node.click(socketid, this);
     }
 }
