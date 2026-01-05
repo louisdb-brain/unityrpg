@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "newfood", menuName = "Game/Items/Food")]
-public class food : item
+public class food : Item
 {
     [Header("Cooking Data")] 
     public bool cookable;

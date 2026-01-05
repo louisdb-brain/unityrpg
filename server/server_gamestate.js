@@ -15,7 +15,8 @@ export class gamestateClass {
         this.maps = {};
         this.maps[1] = true;
 
-        this.objectManager = new dynamicObjectsManager();
+        this.objectManager = new dynamicObjectsManager(this.net);
+
         this.npcManager = new npcManager(this.objectManager, this.net);
         this.spellManager = new SpellManager(
             this.npcManager,

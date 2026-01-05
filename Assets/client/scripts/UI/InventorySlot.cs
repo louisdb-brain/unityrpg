@@ -5,14 +5,14 @@ using UnityEngine.EventSystems;
 public class InventorySlot : MonoBehaviour, IPointerClickHandler
 {
     public Image icon;
-    public item currentItem;
+    public Item currentItem;
 
     void Awake()
     {
         ClearSlot();
     }
 
-    public void SetItem(item newItem)
+    public void SetItem(Item newItem)
     {
         currentItem = newItem;
         icon.sprite = newItem.icon;

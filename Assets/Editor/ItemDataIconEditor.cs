@@ -12,7 +12,7 @@ public static class ItemProjectIconDrawer
     private static void DrawCustomIcon(string guid, Rect rect)
     {
         string path = AssetDatabase.GUIDToAssetPath(guid);
-        item thisitem = AssetDatabase.LoadAssetAtPath<item>(path);
+        Item thisitem = AssetDatabase.LoadAssetAtPath<Item>(path);
 
         if (thisitem == null || thisitem.icon == null)
             return;

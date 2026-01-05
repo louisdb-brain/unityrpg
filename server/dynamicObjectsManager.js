@@ -13,7 +13,7 @@ export class dynamicObjectsManager {
     // LOOT
     // =========================
 
-    spawnLoot(id, itemName, position, level = 1) {
+    spawnLoot(id, itemName, position, level ) {
         if (this.loot[id]) return; // dedupe safety
 
         const lootObj = new loot(

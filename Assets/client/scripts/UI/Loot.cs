@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Loot : MonoBehaviour
 {
-    public item itemData;
+    public Item itemData;
     public int amount = 1;
 
     [Header("Pickup Settings")]

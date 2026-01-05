@@ -1,14 +1,15 @@
 import { npc } from "./npc.js";
 import { playermanager } from "./playermanager.js";
-import { objectManager } from "./dynamicObjectsManager.js";
+
 import { loot } from "./loot.js";
 import { QuestGiver } from "./questgiver.js";
 
 export class npcManager {
-    constructor(objectmanager, net) {
+    constructor(objectManager, net) {
+
         this.spawnCallback = null;
         this.npcs = {};
-        this.objectmanager = objectmanager;
+        this.objectManager = objectManager;
         this.net = net;
         this.respawnQueue = {};
     }
@@ -91,6 +92,7 @@ export class npcManager {
                     { x: 0, y: 0, z: 0 },
                     data.name,
                     this.net,
+                    this.objectManager, // ✅ PASS THE REAL MANAGER
                     data.loot,
                     data.level
                 );

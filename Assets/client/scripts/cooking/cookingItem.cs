@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class cookingItem : MonoBehaviour
 {
-    public item data;
+    public Item data;
     private Image image;
 
     [HideInInspector] public IngredientState state = IngredientState.Raw;
@@ -68,7 +68,7 @@ public class cookingItem : MonoBehaviour
         }
     }
 
-    public void SetItem(item newItem)
+    public void SetItem(Item newItem)
     {
         data = newItem;
 

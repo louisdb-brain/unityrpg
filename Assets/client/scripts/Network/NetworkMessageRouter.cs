@@ -106,6 +106,14 @@ public static class NetworkMessageRouter
                 break;
             case "loot-spawn":
             {
+                if (ClientLootManager.Instance == null)
+                {
+                    Debug.LogError("ClientLootManager not ready — loot-spawn dropped");
+                    return;
+                }
+                Debug.Log("dropping loot");
+            
+
                 var data = JsonUtility.FromJson<LootSpawnPacket>(packet.data);
                 ClientLootManager.Instance.SpawnLoot(data);
                 break;
@@ -113,10 +121,17 @@ public static class NetworkMessageRouter
 
             case "loot-picked":
             {
+                if (ClientLootManager.Instance == null)
+                {
+                    Debug.LogError("ClientLootManager not ready — loot-picked dropped");
+                    return;
+                }
+
                 var data = JsonUtility.FromJson<LootPickedPacket>(packet.data);
                 ClientLootManager.Instance.RemoveLoot(data.id);
                 break;
             }
+
 
 
 

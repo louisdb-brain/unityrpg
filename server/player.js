@@ -62,7 +62,7 @@ export class player {
             id:this.id
         }
         this.emit("weapon-sprite",payload);
-        console.log(payload);
+        //console.log(payload);
     }
     unequipWeapon()
     {

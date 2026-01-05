@@ -37,4 +37,5 @@ public class LootSpawnRequest
     public string itemName;
     public Vector3 position;
     public int level;
+    
 }

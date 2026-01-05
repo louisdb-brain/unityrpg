@@ -4,7 +4,7 @@ public class InventoryManager : MonoBehaviour
 {
     public InventorySlot[] slots;
 
-    public bool AddItem(item newItem)
+    public bool AddItem(Item newItem)
     {
         foreach (InventorySlot slot in slots)
         {

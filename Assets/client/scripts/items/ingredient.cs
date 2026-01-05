@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewIngredient", menuName = "Game/Items/Ingredient")]
-public class ingredient : item
+public class ingredient : Item
 {
     [Header("Cooking Data")]
     public float cookingTime;

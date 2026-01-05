@@ -11,7 +11,7 @@ export class loot {
 
     broadcastSpawn() {
         if (!this.net) return;
-
+        console.log("BroadcastSpawn");
         this.net.broadcast("loot-spawn", {
             id: this.id,
             itemName: this.name,

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class item : ScriptableObject
+public abstract class Item : ScriptableObject
 {
     [Header("Common Item Data")]
     public string itemName;

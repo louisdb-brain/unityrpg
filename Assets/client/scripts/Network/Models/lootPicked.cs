@@ -1,4 +1,4 @@
-
+using UnityEngine;
 [System.Serializable]
 public class LootPickedPacket
 {
@@ -11,5 +11,6 @@ public class LootSpawnPacket
     public string itemName;
     public Vec3 position;
     public int level;
+    public Sprite icon;
 }
 

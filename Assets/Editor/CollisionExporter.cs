@@ -8,7 +8,7 @@ public class CollisionExporter : EditorWindow
     [MenuItem("Tools/Export Collision")]
     public static void ExportCollision()
     {
-        BoxCollider[] boxes = GameObject.FindObjectsOfType<BoxCollider>();
+        BoxCollider[] boxes = FindObjectsOfType<BoxCollider>();
         List<BoxEntry> boxList = new();
 
         foreach (var box in boxes)

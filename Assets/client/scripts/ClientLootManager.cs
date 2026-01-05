@@ -11,8 +11,16 @@ public class ClientLootManager : MonoBehaviour
 
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
+
 
     public void SpawnLoot(LootSpawnPacket data)
     {
@@ -25,16 +33,16 @@ public class ClientLootManager : MonoBehaviour
             Debug.LogWarning($"No prefab for item {data.itemName}");
             return;
         }
-
+        Debug.Log(data.itemName);
         GameObject go = Instantiate(
             itemData.worldPrefab,
-            data.position,
+            data.position.ToUnity(),
             Quaternion.identity
         );
 
 
         LootWorldObject lootObj = go.GetComponent<LootWorldObject>();
-        lootObj.Init(data.id, data.itemName);
+        lootObj.Init(data.id, data.itemName,itemData.icon);
 
         activeLoot[data.id] = go;
     }

@@ -4,14 +4,14 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ItemDatabase", menuName = "Game/Item Database")]
 public class ItemDatabase : ScriptableObject
 {
-    public List<item> allItems = new List<item>();
+    public List<Item> allItems = new List<Item>();
 
     // ✅ Fast lookup by name (for JSON)
-    private Dictionary<string, item> lookup;
+    private Dictionary<string, Item> lookup;
 
     public void BuildLookup()
     {
-        lookup = new Dictionary<string, item>();
+        lookup = new Dictionary<string, Item>();
 
         foreach (var i in allItems)
         {
@@ -20,12 +20,12 @@ public class ItemDatabase : ScriptableObject
         }
     }
 
-    public item GetByName(string itemName)
+    public Item GetByName(string itemName)
     {
         if (lookup == null)
             BuildLookup();
 
-        lookup.TryGetValue(itemName, out item found);
+        lookup.TryGetValue(itemName, out Item found);
         return found;
     }
 }

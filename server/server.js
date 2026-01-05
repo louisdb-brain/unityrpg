@@ -119,7 +119,7 @@ io.on('connection', (socket) => {
     //gamestate.emitPlayers();
     socket.on('spellcast',(data)=>
     {
-        console.log(data)
+        //console.log(data)
         gamestate.castSpell(data);
 
     })

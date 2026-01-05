@@ -49,7 +49,8 @@ const goblin = new npc(
     { x: 0, y: 0, z: 0 },
     "goblin",
     net,
-    gamestate,
+    gamestate.objectManager,
+    "manaherb",
     "butter",
     1
 );
@@ -126,7 +127,7 @@ function handleClientMessage(ws, msg) {
             player.position.set(x, y, z);
             player.targetPosition.set(x,y,z);
             player.angle = angle;
-            console.log("player position", x, y, z);
+            //console.log("player position", x, y, z);
             console.log(player.position)
 
             break;
