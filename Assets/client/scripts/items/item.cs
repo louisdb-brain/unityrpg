@@ -9,10 +9,16 @@ public abstract class Item : ScriptableObject
     public string description;
 
     // Optional: a generic "use" behavior
-    public  void inspect(GameObject user)
+    public virtual void Inspect(GameObject user)
     {
-        Debug.Log(description.ToString());
+        Debug.Log(description);
     }
+
+    public virtual void onUse(GameObject user)
+    {
+        Debug.Log("used item");
+    }
+
 
     public virtual void onLoot(GameObject user)
     {

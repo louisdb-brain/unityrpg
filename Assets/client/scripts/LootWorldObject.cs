@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class LootWorldObject : MonoBehaviour
@@ -18,10 +19,12 @@ public class LootWorldObject : MonoBehaviour
         startPos = transform.position;
     }
 
-    public void Init(string id, string name)
+    public void Init(string id, string name,Sprite Icon)
     {
         lootId = id;
         itemName = name;
+        gameObject.GetComponent<SpriteRenderer>().sprite = Icon;
+
     }
 
     void Update()
