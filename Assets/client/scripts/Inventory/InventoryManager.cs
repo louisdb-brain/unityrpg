@@ -7,6 +7,8 @@ public class InventoryManager : MonoBehaviour
     public InventorySlotUI slotPrefab;
     public Transform slotParent;
     public int slotCount = 28;
+    [Header("TEST INVENTORY (Editor Only)")]
+    public List<Item> testItems = new List<Item>();
 
     // =========================
     // DATA
@@ -16,7 +18,7 @@ public class InventoryManager : MonoBehaviour
     public class InventorySlot
     {
         public Item item;
-        public int amount;
+        //public int amount;
     }
 
     private InventorySlot[] inventory;
@@ -44,6 +46,21 @@ public class InventoryManager : MonoBehaviour
         SetActiveSlot(0);
 
         Debug.Log("InventoryManager STARTED");
+        foreach (Item item in testItems)
+        {
+            if (item == null)
+                continue;
+
+            bool added = AddItem(item);
+
+            if (!added)
+            {
+                Debug.LogWarning("Inventory full, could not add test item: " + item.name);
+                break;
+            }
+        }
+
+        Debug.Log("InventoryManager STARTED (Test Mode)");
     }
 
     void Update()
@@ -67,9 +84,12 @@ public class InventoryManager : MonoBehaviour
             slot.Init(i, this);
             slots.Add(slot);
 
+            Debug.Log($"[BuildSlots] index={i}, instanceID={slot.GetInstanceID()}");
+
             UpdateSlotUI(i);
         }
     }
+
 
     // =========================
     // PUBLIC API (USED BY LOOT)
@@ -77,32 +97,21 @@ public class InventoryManager : MonoBehaviour
 
     public bool AddItem(Item item)
     {
-        // 1️⃣ Try stacking
-        for (int i = 0; i < inventory.Length; i++)
-        {
-            if (inventory[i].item == item)
-            {
-                inventory[i].amount++;
-                UpdateSlotUI(i);
-                return true;
-            }
-        }
-
-        // 2️⃣ Find empty slot
+        // Find first empty slot
         for (int i = 0; i < inventory.Length; i++)
         {
             if (inventory[i].item == null)
             {
                 inventory[i].item = item;
-                inventory[i].amount = 1;
                 UpdateSlotUI(i);
                 return true;
             }
         }
 
-        // 3️⃣ Inventory full
+        // Inventory full
         return false;
     }
+
 
     // =========================
     // UI INTERACTION
@@ -110,43 +119,53 @@ public class InventoryManager : MonoBehaviour
 
     public void OnSlotClicked(int index)
     {
-        // Grab
+        // Nothing grabbed yet → try to grab
         if (grabbedSlotIndex == -1)
         {
+            // ❌ Do NOT grab empty slots
+            if (inventory[index].item == null)
+                return;
+
             grabbedSlotIndex = index;
             SetActiveSlot(index);
+            return;
         }
-        // Drop / swap
-        else
-        {
-            SwapSlots(grabbedSlotIndex, index);
-            grabbedSlotIndex = -1;
-        }
+
+        // Something is grabbed → drop / move
+        MoveItem(grabbedSlotIndex, index);
+        grabbedSlotIndex = -1;
+        
     }
 
-    private void SwapSlots(int from, int to)
+
+    public void MoveItem(int from, int to)
     {
-        InventorySlot temp = inventory[from];
-        inventory[from] = inventory[to];
-        inventory[to] = temp;
+        if (from == to)
+            return;
+
+        Item temp = inventory[from].item;
+        inventory[from].item = inventory[to].item;
+        inventory[to].item = temp;
 
         UpdateSlotUI(from);
         UpdateSlotUI(to);
-
         SetActiveSlot(to);
+        
     }
+
 
     // =========================
     // UI HELPERS
     // =========================
 
-    private void UpdateSlotUI(int index)
+    public void UpdateSlotUI(int index)
     {
         InventorySlot slot = inventory[index];
 
         if (slot.item == null)
         {
             slots[index].SetIcon(null);
+            Debug.Log("no icon for slot" );
         }
         else
         {
@@ -154,7 +173,7 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    private void SetActiveSlot(int index)
+    public void SetActiveSlot(int index)
     {
         activeSlotIndex = index;
 
@@ -162,7 +181,7 @@ public class InventoryManager : MonoBehaviour
             slots[i].SetActive(i == activeSlotIndex);
     }
 
-    private void MoveActive(int delta)
+    public void MoveActive(int delta)
     {
         int next = Mathf.Clamp(activeSlotIndex + delta, 0, slotCount - 1);
         SetActiveSlot(next);

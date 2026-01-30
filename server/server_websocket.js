@@ -44,18 +44,23 @@ const net = { broadcast, sendTo };
 const gamestate = new gamestateClass(net);
 gamestate.start();
 // TEST SPAWN GOBLIN
-const goblin = new npc(
-    "goblin_1",
-    { x: 0, y: 0, z: 0 },
-    "goblin",
-    net,
-    gamestate.objectManager,
-    "manaherb",
-    "butter",
-    1
-);
+for(let i=0;i<10;i++){
+    let goblin = new npc(
+        "goblin_"+i.toString(),
+        { x: 0, y: 0, z: i*5 },
+        "goblin"+i.toString(),
+        net,
+        gamestate.objectManager,
+        "manaherb",
+        "onion",
+        1
+    );
+    gamestate.addnpc(goblin);
+}
 
-gamestate.addnpc(goblin);
+
+
+
 // --------------------
 // CLIENT CONNECTION HANDLER
 // --------------------
