@@ -28,7 +28,15 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IDropHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        inventoryManager?.OnSlotClicked(slotIndex);
+        
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            inventoryManager?.OnSlotRightClick(slotIndex);
+        }
+        else if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            inventoryManager?.OnSlotClicked(slotIndex);
+        }
     }
 
     public void OnDrop(PointerEventData eventData)

@@ -137,6 +137,17 @@ public class InventoryManager : MonoBehaviour
         
     }
 
+    public void OnSlotRightClick(int index)
+    {
+        Item thisitem = inventory[index].item;
+        //don't rightclick empty items
+        if( this== null)
+            return;
+        ConstructionPlacer.Instance.StartPlacing(thisitem.icon);
+        // Right-click = start building
+        
+    }
+
 
     public void MoveItem(int from, int to)
     {
