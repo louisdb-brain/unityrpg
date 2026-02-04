@@ -4,6 +4,7 @@ public class ConstructionPlacer : MonoBehaviour
 {
     public static ConstructionPlacer Instance;
     public GameObject prefab;
+    public GameObject basePrefab;
     private GameObject _ghost;
     private GameObject _toPlacePrefab;
 
@@ -13,10 +14,17 @@ public class ConstructionPlacer : MonoBehaviour
         Instance = this;
     }
 
-    public void StartPlacing(Sprite image)
+    public void StartPlacing(Sprite image,bool isBase)
     {
         CancelPlacing();
-        _toPlacePrefab = prefab;
+        if (isBase)
+        {
+            _toPlacePrefab = basePrefab;
+        }
+        else
+        {
+            _toPlacePrefab = prefab;
+        }
         _ghost = Instantiate(prefab);
         _ghost.GetComponent<SpriteRenderer>().sprite = image;
         _toPlacePrefab.GetComponent<SpriteRenderer>().sprite=image;

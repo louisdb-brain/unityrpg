@@ -140,10 +140,16 @@ public class InventoryManager : MonoBehaviour
     public void OnSlotRightClick(int index)
     {
         Item thisitem = inventory[index].item;
+        
         //don't rightclick empty items
         if( this== null)
             return;
-        ConstructionPlacer.Instance.StartPlacing(thisitem.icon);
+        bool isbase=false;
+        if (thisitem is buildingItem build && build.properties.HasFlag(BuildPropertyType.Base))
+        {
+            isbase = true;
+        }
+        ConstructionPlacer.Instance.StartPlacing(thisitem.icon,isbase);
         // Right-click = start building
         
     }
