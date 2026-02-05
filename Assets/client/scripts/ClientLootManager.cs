@@ -28,9 +28,14 @@ public class ClientLootManager : MonoBehaviour
             return;
 
         Item itemData = itemDatabase.GetByName(data.itemName);
-        if (itemData == null || itemData.worldPrefab == null)
+        if (itemData == null )
         {
-            Debug.LogWarning($"No prefab for item {data.itemName}");
+            Debug.LogWarning($"no item in itemdatabase {data.itemName}");
+            return;
+        }
+        if(itemData.worldPrefab == null)
+        {
+            Debug.LogWarning($"No prefab for item - {data.itemName}");
             return;
         }
         Debug.Log(data.itemName);

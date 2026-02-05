@@ -1,27 +1,31 @@
+using Unity.Mathematics;
 using UnityEngine;
+using Random = UnityEngine.Random;
+using System;
 
 public class LootSpawner : MonoBehaviour
 {
     [Header("Loot Definition")]
     public string lootId;     // MUST be unique across the whole world
-    public string itemName;   // Must exist in ItemDatabase
-
+       // Must exist in ItemDatabase
+    
     [Header("Optional")]
     public int level = 1;
 
     private bool sent = false;
 
-    void Start()
+    public void spawnLoot(Item item)
     {
         // Prevent accidental double-sends
         if (sent) return;
         sent = true;
-
+        Vector3 randomOffset = Random.insideUnitSphere * 2f;
+        randomOffset.y = 0f;
         LootSpawnRequest data = new LootSpawnRequest
         {
-            id = lootId,
-            itemName = itemName,
-            position = transform.position,
+            id = lootId+Guid.NewGuid().ToString(),
+            itemName = item.itemName,
+            position = transform.position + randomOffset ,
             level = level
         };
 

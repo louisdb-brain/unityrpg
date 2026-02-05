@@ -18,5 +18,6 @@ export class loot {
             position: this.position,
             level: this.level
         });
+
     }
 }

@@ -28,7 +28,43 @@ public class LocalPlayer : PlayerBase
         if (move.sqrMagnitude > 0.001f)
         {
             LastMoveDirection = move.normalized;
+            
         }
+        CheckInteractRay();
+    }
+
+    void CheckInteractRay()
+    {
+        float interactDistance = 1.5f;
+        Debug.DrawRay(transform.position, LastMoveDirection *interactDistance, Color.red);
+
+        
+        Ray ray = new Ray(transform.position, LastMoveDirection);
+        if (Physics.Raycast(ray, out RaycastHit hit,interactDistance))
+        {
+                            Debug.DrawRay(transform.position, LastMoveDirection *interactDistance, Color.red);
+
+            switch (hit.collider.tag)
+            {
+                case "NPC":
+                break;
+                case "Player":
+                    //used for inspecting and trading
+                case "NODE":
+                    GameObject hitObject=hit.collider.gameObject;
+                    if (hit.collider.TryGetComponent<nodeBehaviour>(out var node))
+                    {
+                        node.ShowInteract();
+                    }                    
+                    break;
+            }
+            
+        }
+    }
+
+    void CheckInventoryForItem()
+    {
+        
     }
 
     void CastSpell()

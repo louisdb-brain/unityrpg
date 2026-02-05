@@ -5,13 +5,13 @@ public static class NetworkMessageRouter
     public static void Handle(string json)
     {
         
-        Debug.Log("RAW JSON: " + json);
+        //Debug.Log("RAW JSON: " + json);
 
         var packet = JsonUtility.FromJson<ServerPacket>(json);
-        Debug.Log("PACKET IS NULL? " + (packet == null));
+        //Debug.Log("PACKET IS NULL? " + (packet == null));
 
         if (packet != null)
-            Debug.Log("PACKET TYPE: " + packet.type);
+           // Debug.Log("PACKET TYPE: " + packet.type);
 
         switch (packet.type)
         {
@@ -116,6 +116,7 @@ public static class NetworkMessageRouter
 
                 var data = JsonUtility.FromJson<LootSpawnPacket>(packet.data);
                 ClientLootManager.Instance.SpawnLoot(data);
+                Debug.Log(data.itemName+data.id);
                 break;
             }
 

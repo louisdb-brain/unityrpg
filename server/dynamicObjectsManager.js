@@ -25,6 +25,7 @@ export class dynamicObjectsManager {
         );
 
         this.loot[id] = lootObj;
+        console.log(lootObj);
     }
 
     pickupLoot(id, socketid) {

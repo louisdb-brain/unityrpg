@@ -133,7 +133,7 @@ function handleClientMessage(ws, msg) {
             player.targetPosition.set(x,y,z);
             player.angle = angle;
             //console.log("player position", x, y, z);
-            console.log(player.position)
+            //console.log(player.position)
 
             break;
         }
@@ -158,12 +158,14 @@ function handleClientMessage(ws, msg) {
 
             if (gamestate.objectManager.loot[data.id]) return;
 
+
             gamestate.objectManager.spawnLoot(
                 data.id,
                 data.itemName,
                 data.position,
                 data.level ?? 1
             );
+
             break;
         }
         case "loot-pickup": {
