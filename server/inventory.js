@@ -24,6 +24,14 @@ export class inventory{
             //CODE FOR DROPPING LOOT ON FLOOR;
         }
     }
+    emitInventory()
+    {
+        const payload={
+            playerId:this.playerid,
+            items:this.items
+        }
+        this.emit('emit-inventory',payload);
+    }
     removeitem(itemName) {
         const index = this.items.findIndex(item => item.name === itemName);
 

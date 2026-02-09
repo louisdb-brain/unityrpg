@@ -115,6 +115,8 @@ function handleClientMessage(ws, msg) {
                 y: 0,
                 z: 0
             });
+            playermanager.additem(ws.id, "manaherb");
+            playermanager.additem(ws.id, "butter");
             console.log("data sent player spawned")
             break;
 
@@ -151,6 +153,7 @@ function handleClientMessage(ws, msg) {
             gamestate.spellManager.castSpell(ws.id,msg.data);
 
             break;
+
         case "loot-spawn-request": {
             const data = typeof msg.data === "string"
                 ? JSON.parse(msg.data)
@@ -178,6 +181,21 @@ function handleClientMessage(ws, msg) {
                 ws.id
             );
             break;
+        }
+        case "add-item":{
+
+        }
+        case "request-inventory":{
+
+            const data = typeof msg.data === "string"
+                ? JSON.parse(msg.data)
+                : msg.data;
+            console.log("inventory request by player "+ data.id);
+            playermanager.requestInventory(
+                data.id
+            );
+            break;
+
         }
 
         default:

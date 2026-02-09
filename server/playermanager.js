@@ -70,6 +70,10 @@ export const playermanager = {
     getPlayer(id) {
         return players[id];
     },
+    requestInventory(id)
+    {
+      players[id].inventory.emitInventory();
+    },
 
     setwantedLevel(id, pwantedlevel) {
         if (players[id] )

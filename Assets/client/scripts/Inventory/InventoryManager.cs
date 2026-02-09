@@ -1,14 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InventoryManager : MonoBehaviour
+public  class InventoryManager : MonoBehaviour
 {
+    public static InventoryManager Instance;
+    public ItemDatabase database;
     [Header("UI Setup")]
     public InventorySlotUI slotPrefab;
     public Transform slotParent;
     public int slotCount = 28;
-    [Header("TEST INVENTORY (Editor Only)")]
-    public List<Item> testItems = new List<Item>();
+    [Header(" INVENTORY (Editor Only)")]
+    public List<Item> Items = new List<Item>();
 
     // =========================
     // DATA
@@ -34,7 +36,16 @@ public class InventoryManager : MonoBehaviour
     // =========================
     // UNITY
     // =========================
-
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+    
+        Instance = this;
+    }
     void Start()
     {
         // Initialize inventory data
@@ -46,7 +57,7 @@ public class InventoryManager : MonoBehaviour
         SetActiveSlot(0);
 
         Debug.Log("InventoryManager STARTED");
-        foreach (Item item in testItems)
+        foreach (Item item in Items)
         {
             if (item == null)
                 continue;
@@ -59,7 +70,6 @@ public class InventoryManager : MonoBehaviour
                 break;
             }
         }
-
         Debug.Log("InventoryManager STARTED (Test Mode)");
     }
 
@@ -107,10 +117,12 @@ public class InventoryManager : MonoBehaviour
                 return true;
             }
         }
+        
 
         // Inventory full
         return false;
     }
+   
 
 
     // =========================
@@ -142,7 +154,7 @@ public class InventoryManager : MonoBehaviour
         Item thisitem = inventory[index].item;
         
         //don't rightclick empty items
-        if( this== null)
+        if( thisitem== null)
             return;
         bool isbase=false;
         if (thisitem is buildingItem build && build.properties.HasFlag(BuildPropertyType.Base))

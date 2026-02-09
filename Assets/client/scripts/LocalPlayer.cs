@@ -7,6 +7,11 @@ public class LocalPlayer : PlayerBase
 
     public Vector3 LastMoveDirection { get; private set; } = Vector3.forward;
 
+    void Start()
+    {
+        NetworkClient.Instance.Send("request-inventory",JsonUtility.FromJson<PlayerIdPacket>(playerId));
+    }
+
     void Update()
     {
         UpdateMoveDirection();

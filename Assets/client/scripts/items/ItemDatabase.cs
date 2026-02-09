@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,17 +7,31 @@ public class ItemDatabase : ScriptableObject
 {
     public List<Item> allItems = new List<Item>();
 
-    // ✅ Fast lookup by name (for JSON)
+    // Fast lookup by name (JSON / server safe)
     private Dictionary<string, Item> lookup;
 
     public void BuildLookup()
     {
-        lookup = new Dictionary<string, Item>();
+        lookup = new Dictionary<string, Item>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var i in allItems)
+        foreach (var item in allItems)
         {
-            if (!lookup.ContainsKey(i.name))
-                lookup.Add(i.name, i);
+            if (item == null)
+            {
+                Debug.LogError("ItemDatabase contains a null Item reference", this);
+                continue;
+            }
+
+            if (lookup.ContainsKey(item.name))
+            {
+                Debug.LogError(
+                    $"Duplicate item name '{item.name}' in ItemDatabase. Names must be unique.",
+                    item
+                );
+                continue;
+            }
+
+            lookup.Add(item.name, item);
         }
     }
 
@@ -25,7 +40,18 @@ public class ItemDatabase : ScriptableObject
         if (lookup == null)
             BuildLookup();
 
-        lookup.TryGetValue(itemName, out Item found);
+        if (string.IsNullOrEmpty(itemName))
+        {
+            Debug.LogError("GetByName called with null or empty itemName");
+            return null;
+        }
+
+        if (!lookup.TryGetValue(itemName, out Item found))
+        {
+            Debug.LogWarning($"Item not found in database: '{itemName}'");
+            return null;
+        }
+
         return found;
     }
 }

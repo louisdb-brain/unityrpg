@@ -1,3 +1,6 @@
+using Unity.VisualScripting;
+using UnityEditor;
+using UnityEditor.Sprites;
 using UnityEngine;
 
 public static class NetworkMessageRouter
@@ -132,11 +135,51 @@ public static class NetworkMessageRouter
                 ClientLootManager.Instance.RemoveLoot(data.id);
                 break;
             }
+            case "emit-inventory":
+            {
+                if (InventoryManager.Instance == null)
+                {
+                    Debug.LogError("inventorymanager does not exist yet, emit inventory failed");
+                }
 
+                var data = JsonUtility.FromJson<InventoryEmitPacket>(packet.data);
 
+                if (data.playerId != PlayerManager.Instance.localPlayerId)
+                {
+                    Debug.LogError("no local player");
+                    return;
+                }
+                string[] items = data.items;
+                foreach(string i in items)
+                {
+                    ItemDatabase itemDatabase = InventoryManager.Instance.database;
+                    Item thisitem=itemDatabase.GetByName(i);
+                    InventoryManager.Instance.AddItem(thisitem);
+                }
 
+                break;
+            }
+            case "add-item":
+            {
+                if (InventoryManager.Instance == null)
+                {
+                    Debug.LogError("inventorymanager does not exist yet, add-item failed");
+                }
+                var data = JsonUtility.FromJson<AddItemPacket>(packet.data);
+                Debug.Log("ADD-ITEM RAW DATA: " + packet.data);
 
-
+                if (data.id != PlayerManager.Instance.localPlayerId)
+                {
+                    Debug.LogError("no local player");
+                    return;
+                }
+                ItemDatabase itemDatabase = InventoryManager.Instance.database;
+                Item thisitem=itemDatabase.GetByName(data.name);
+                InventoryManager.Instance.AddItem(thisitem);
+                   
+                break;
+            }
+            
 
     
             default:
