@@ -1,0 +1,659 @@
+fileFormatVersion: 2
+guid: b4b044d701a6e824b896f9cb78f615e0
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: mandolin_town_house1
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 3199
+        width: 932
+        height: 1593
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f4639c61dd2a55449067d2803e7db3a
+      internalID: -671342849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_house2
+      rect:
+        serializedVersion: 2
+        x: 1023
+        y: 3222
+        width: 745
+        height: 1518
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03b89b5dda0d3c942ba5ee71235b4357
+      internalID: 1914886973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_house3
+      rect:
+        serializedVersion: 2
+        x: 1773
+        y: 3193
+        width: 1184
+        height: 1652
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d5c5863a286555418d2344db933f826
+      internalID: -1129744332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_house4
+      rect:
+        serializedVersion: 2
+        x: 1697
+        y: 2044
+        width: 756
+        height: 1114
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a2aa9a57a23d5f468b9bf6f7bf6254a
+      internalID: -517507680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_house5
+      rect:
+        serializedVersion: 2
+        x: 2482
+        y: 1335
+        width: 827
+        height: 862
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a76eb708b06a5cb489ebd20c36e97be2
+      internalID: 2104321338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_house6
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 60
+        width: 996
+        height: 1389
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: acfa09bfe89fd734c949dba5875574ee
+      internalID: -2073687112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_housesbg
+      rect:
+        serializedVersion: 2
+        x: 1217
+        y: 84
+        width: 2871
+        height: 1207
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb78ffa99e12dd74c92dea9432664020
+      internalID: -7907143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_windmill
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 1824
+        width: 1266
+        height: 1195
+      alignment: 9
+      pivot: {x: 0.50925624, y: 0.51961255}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53d9ecaaed74bf44792dea95c03d9673
+      internalID: -468111448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_decal1
+      rect:
+        serializedVersion: 2
+        x: 1410
+        y: 1378
+        width: 486
+        height: 434
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 71e9acf171d958f43a2f84e670b3e59f
+      internalID: -1960525084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_decal2
+      rect:
+        serializedVersion: 2
+        x: 2019
+        y: 1437
+        width: 452
+        height: 387
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f1b730dd21045e48ab0aa480e003301
+      internalID: -84895368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_gate
+      rect:
+        serializedVersion: 2
+        x: 2852
+        y: 2246
+        width: 1248
+        height: 820
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7dc1d6f28c35fd4abb6359b8d824d21
+      internalID: -709617863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_wall1
+      rect:
+        serializedVersion: 2
+        x: 3385
+        y: 4150
+        width: 709
+        height: 557
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4362f7b1d1a0d2243a8acbb7aad3c62a
+      internalID: -1116409052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_wall2
+      rect:
+        serializedVersion: 2
+        x: 3021
+        y: 3874
+        width: 305
+        height: 903
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a91b001aaa6175448b5eaf5dc691a2ed
+      internalID: 1547300684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_wall3
+      rect:
+        serializedVersion: 2
+        x: 3789
+        y: 3564
+        width: 299
+        height: 562
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1fc88867f3ae94746964f1a2d2a5aa43
+      internalID: 511103665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_decal3
+      rect:
+        serializedVersion: 2
+        x: 3191
+        y: 3095
+        width: 328
+        height: 270
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 55af9797fc4ddf4419a70b1e8574a99b
+      internalID: -538322957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_latrine
+      rect:
+        serializedVersion: 2
+        x: 3519
+        y: 1373
+        width: 405
+        height: 597
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 18a96146baaa36847b17e7ba2a05de73
+      internalID: -2089222105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_fence
+      rect:
+        serializedVersion: 2
+        x: 3437
+        y: 1982
+        width: 534
+        height: 240
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9f617f7f7f43fdb4fab7a1e27efa563e
+      internalID: 1268563494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_extra
+      rect:
+        serializedVersion: 2
+        x: 2541
+        y: 2509
+        width: 211
+        height: 627
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 587c3f386012f4a48acc4424deaf7a8d
+      internalID: -143794822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_decal4
+      rect:
+        serializedVersion: 2
+        x: 3549
+        y: 3083
+        width: 545
+        height: 411
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 476c1f3c396269c47aa544f0e67d713d
+      internalID: 1233227346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_decal5
+      rect:
+        serializedVersion: 2
+        x: 3010
+        y: 3376
+        width: 363
+        height: 235
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 39355bc8e3dfc36458efb741df445d4c
+      internalID: 772711053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_decal6
+      rect:
+        serializedVersion: 2
+        x: 2986
+        y: 3617
+        width: 369
+        height: 222
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 196cf4f6726168b408f49fe19c0c10c0
+      internalID: -1483714237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_well
+      rect:
+        serializedVersion: 2
+        x: 3367
+        y: 3576
+        width: 399
+        height: 504
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1eb1668b6d8cf344ba80edf1b5cef61e
+      internalID: 460314271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mandolin_town_laundry
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 1496
+        width: 539
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 35, y: 0, z: 12, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c63eb5779814939478ea13d26bf025bb
+      internalID: -1132811960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 65e4931caa40df0468306a6928a635f7
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      mandolin_town_decal1: -1960525084
+      mandolin_town_decal2: -84895368
+      mandolin_town_decal3: -538322957
+      mandolin_town_decal4: 1233227346
+      mandolin_town_decal5: 772711053
+      mandolin_town_decal6: -1483714237
+      mandolin_town_extra: -143794822
+      mandolin_town_fence: 1268563494
+      mandolin_town_gate: -709617863
+      mandolin_town_house1: -671342849
+      mandolin_town_house2: 1914886973
+      mandolin_town_house3: -1129744332
+      mandolin_town_house4: -517507680
+      mandolin_town_house5: 2104321338
+      mandolin_town_house6: -2073687112
+      mandolin_town_housesbg: -7907143
+      mandolin_town_latrine: -2089222105
+      mandolin_town_laundry: -1132811960
+      mandolin_town_wall1: -1116409052
+      mandolin_town_wall2: 1547300684
+      mandolin_town_wall3: 511103665
+      mandolin_town_well: 460314271
+      mandolin_town_windmill: -468111448
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

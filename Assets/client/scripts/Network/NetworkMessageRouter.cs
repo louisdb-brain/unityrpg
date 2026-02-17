@@ -156,7 +156,6 @@ public static class NetworkMessageRouter
                     Item thisitem=itemDatabase.GetByName(i);
                     InventoryManager.Instance.AddItem(thisitem);
                 }
-
                 break;
             }
             case "add-item":
@@ -179,9 +178,6 @@ public static class NetworkMessageRouter
                    
                 break;
             }
-            
-
-    
             default:
                 Debug.LogWarning("Unknown WS message type: " + packet.type);
                 break;

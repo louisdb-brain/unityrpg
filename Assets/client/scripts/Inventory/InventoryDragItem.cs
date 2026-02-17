@@ -17,10 +17,13 @@ public class InventoryDragItem : MonoBehaviour, IBeginDragHandler, IDragHandler,
     void Awake()
     {
         fromSlot = GetComponentInParent<InventorySlotUI>();
-        rootCanvas = GetComponentInParent<Canvas>();
+
+        var canvas = GetComponentInParent<Canvas>();
+        if (canvas != null)
+            rootCanvas = canvas.rootCanvas; // ✅ FIX
 
         if (fromSlot == null)
-            Debug.LogError("[InventoryDragItem] No InventorySlotUI found in parents. Put this on the Icon under a slot.");
+            Debug.LogError("[InventoryDragItem] No InventorySlotUI found in parents.");
         if (rootCanvas == null)
             Debug.LogError("[InventoryDragItem] No Canvas found in parents.");
     }
@@ -30,7 +33,6 @@ public class InventoryDragItem : MonoBehaviour, IBeginDragHandler, IDragHandler,
         if (fromSlot == null || fromSlot.inventoryManager == null)
             return;
 
-        // don't drag empty slots
         if (fromSlot.iconImage == null || fromSlot.iconImage.sprite == null)
             return;
 
@@ -38,11 +40,8 @@ public class InventoryDragItem : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
         CreateGhost(fromSlot.iconImage.sprite);
 
-        // IMPORTANT: ghost should not block raycasts
-        if (ghostImage != null)
-            ghostImage.raycastTarget = false;
+        eventData.pointerDrag = gameObject; // ✅ FIX
 
-        // optional: hide the real icon during drag
         SetRealIconAlpha(0f);
     }
 
@@ -50,8 +49,22 @@ public class InventoryDragItem : MonoBehaviour, IBeginDragHandler, IDragHandler,
     {
         if (ghostRT == null) return;
 
-        ghostRT.position = eventData.position;
+        if (rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        {
+            ghostRT.position = eventData.position;
+        }
+        else
+        {
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                rootCanvas.transform as RectTransform,
+                eventData.position,
+                rootCanvas.worldCamera,
+                out Vector3 worldPos
+            );
+            ghostRT.position = worldPos;
+        }
     }
+
 
     public void OnEndDrag(PointerEventData eventData)
     {

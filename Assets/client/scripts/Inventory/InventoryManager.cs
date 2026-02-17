@@ -215,4 +215,18 @@ public  class InventoryManager : MonoBehaviour
         int next = Mathf.Clamp(activeSlotIndex + delta, 0, slotCount - 1);
         SetActiveSlot(next);
     }
+    public void DropItem(int slotIndex)
+    {
+        Item item = Items[slotIndex];
+        if (item == null)
+            return;
+    
+        // 🔥 game logic here
+        // spawn loot, notify server, etc.
+        
+        
+        Items[slotIndex] = null;
+        UpdateSlotUI(slotIndex);
+    }
+
 }
