@@ -101,6 +101,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7177138fff861044b6c9b824f26132f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  groundY: 0
+  shadowOffset: {x: 0.25, y: 0.25}
+  shadowScale: 1
+  shadowColor: {r: 0, g: 0, b: 0, a: 0.45}
+  shadowMaterial: {fileID: 2100000, guid: b7e72436e120f3040860ec822cae2eeb, type: 2}
 --- !u!65 &2493326749263090380
 BoxCollider:
   m_ObjectHideFlags: 0

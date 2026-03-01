@@ -4,7 +4,7 @@ public class PersistentRoot : MonoBehaviour
 {
     private static PersistentRoot instance;
 
-    void Awake()
+    /*void Awake()
     {
         if (instance != null)
         {
@@ -14,5 +14,5 @@ public class PersistentRoot : MonoBehaviour
 
         instance = this;
         DontDestroyOnLoad(gameObject);
-    }
+    }*/
 }
