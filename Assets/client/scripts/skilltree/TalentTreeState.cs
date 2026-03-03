@@ -20,6 +20,7 @@ public sealed class TalentTreeState
         unlockedNodeIds = new List<string>();
     }
 
+   
     public bool IsUnlocked(TalentNodeSO node)
     {
         if (node == null || string.IsNullOrWhiteSpace(node.nodeId))
@@ -34,18 +35,22 @@ public sealed class TalentTreeState
     {
         if (tree == null || node == null)
         {
+            Debug.LogWarning("Can't unlock null node");
             return false;
         }
 
         if (string.IsNullOrWhiteSpace(node.nodeId))
         {
+            Debug.LogWarning("Can't unlock emptyid node");
             return false;
         }
 
         if (IsUnlocked(node))
         {
+            Debug.LogWarning("node unlocked");
             return false;
         }
+
 
         if (availablePoints < node.pointCost)
         {
@@ -73,6 +78,8 @@ public sealed class TalentTreeState
 
         availablePoints -= node.pointCost;
         unlockedNodeIds.Add(node.nodeId);
+        Debug.Log("node unlocked"+node.nodeId);
+        Debug.Log(unlockedNodeIds.Count);
         return true;
     }
 
