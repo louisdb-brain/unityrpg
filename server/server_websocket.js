@@ -182,8 +182,25 @@ function handleClientMessage(ws, msg) {
             );
             break;
         }
+        //for direct to inventory (crafting or quest reward)
         case "add-item":{
+            const data = typeof msg.data === "string"
+                ? JSON.parse(msg.data)
+                : msg.data;
+            if(!playermanager.additem(ws.id,data.itemName))
+            {
+                const player=playermanager.getPlayer(ws.id).position;
+                const playerpos=player.getposition();
+                const playerlevel=player.getLevel();
+                gamestate.objectManager.spawnLoot(crypto.randomUUID(),data.itemName,playerpos,playerlevel)
+            }
 
+        }
+        case "remove-item":{
+            const data = typeof msg.data === "string"
+                ? JSON.parse(msg.data)
+                : msg.data;
+            playermanager.getPlayer(ws.id).removeItem(data.id);
         }
         case "request-inventory":{
 

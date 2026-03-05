@@ -32,10 +32,13 @@ export class dynamicObjectsManager {
         const lootObj = this.loot[id];
         if (!lootObj) return;
 
-        playermanager.additem(socketid, lootObj.name);
-        delete this.loot[id];
+        if(playermanager.additem(socketid, lootObj.name))
+        {
+            delete this.loot[id];
+            this.net.broadcast("loot-picked", { id });
+        }
 
-        this.net.broadcast("loot-picked", { id });
+
     }
 
     // =========================

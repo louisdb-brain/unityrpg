@@ -1,3 +1,6 @@
+import {dynamicObjectsManager} from "./dynamicObjectsManager.js";
+import {randInt} from "three/src/math/MathUtils.js";
+
 export class inventory{
     constructor(playerid,emitCallback,holdMax){
         this.playerid = playerid;
@@ -19,10 +22,14 @@ export class inventory{
             }
             console.log("[SERVER] Inventory additem:", itemname);
             this.emit('add-item', payload);
+            return true;
         }
         else{
-            //CODE FOR DROPPING LOOT ON FLOOR;
+            //return false FOR DROPPING LOOT ON FLOOR;
+            return false;
         }
+
+
     }
     emitInventory()
     {
@@ -37,6 +44,7 @@ export class inventory{
 
         if (index !== -1) {
             this.items.splice(index, 1);
+            this.emit('remove-item', itemName);
             return true;  // removed successfully
         }
         console.log(this.items);

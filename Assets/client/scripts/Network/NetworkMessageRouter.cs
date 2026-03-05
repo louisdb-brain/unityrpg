@@ -169,13 +169,30 @@ public static class NetworkMessageRouter
 
                 if (data.id != PlayerManager.Instance.localPlayerId)
                 {
-                    Debug.LogError("no local player");
+                    Debug.LogError("not local player");
                     return;
                 }
                 ItemDatabase itemDatabase = InventoryManager.Instance.database;
                 Item thisitem=itemDatabase.GetByName(data.name);
                 InventoryManager.Instance.AddItem(thisitem);
                    
+                break;
+            }
+            case "remove-item":
+            {
+                if (InventoryManager.Instance == null)
+                {
+                    Debug.LogError("inventorymanager does not exist yet, add-item failed");
+                }
+                var data = JsonUtility.FromJson<RemoveItemPacket>(packet.data);
+                Debug.Log("remove-ITEM RAW DATA: " + packet.data);
+                if (data.id != PlayerManager.Instance.localPlayerId)
+                {
+                    Debug.LogError("not local player");
+                    return;
+                }
+                
+                
                 break;
             }
             default:

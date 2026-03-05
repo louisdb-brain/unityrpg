@@ -83,7 +83,12 @@ export const playermanager = {
     },
     additem(id,itemname)
     {
-        players[id].inventory.additem(itemname);
+        const player = players?.[id];
+        if (!player || !player.inventory || typeof player.inventory.addItem !== "function") {
+            return false;
+        }
+        return players[id].inventory.additem(itemname)
+
     },
     removeitem(id,itemname)
     {

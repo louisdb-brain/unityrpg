@@ -3,7 +3,7 @@ using UnityEngine;
 
 public  class InventoryManager : MonoBehaviour
 {
-    public static InventoryManager Instance;
+    public static InventoryManager Instance{ get; private set; }
     public ItemDatabase database;
     [Header("UI Setup")]
     public InventorySlotUI slotPrefab;
@@ -12,6 +12,7 @@ public  class InventoryManager : MonoBehaviour
     [Header(" INVENTORY (Editor Only)")]
     public List<Item> Items = new List<Item>();
 
+    
     // =========================
     // DATA
     // =========================
@@ -121,6 +122,41 @@ public  class InventoryManager : MonoBehaviour
 
         // Inventory full
         return false;
+    }
+
+    public bool RemoveItem(string itemName)
+    {
+        int searchedIndex = SearchForItemByName(itemName);
+
+        if (searchedIndex == -1)
+            return false;
+
+        inventory[searchedIndex].item = null;
+        UpdateSlotUI(searchedIndex);
+
+        Debug.Log("Removed item: " + itemName + " from slot " + searchedIndex);
+        return true;
+    }
+    public int SearchForItemByName(string itemName)
+    {
+        if (string.IsNullOrWhiteSpace(itemName))
+            return -1;
+
+        // Normalize once
+        string target = itemName.Trim();
+
+        for (int i = 0; i < inventory.Length; i++)
+        {
+            Item slotItem = inventory[i].item;
+            if (slotItem == null)
+                continue;
+
+            // ScriptableObject assets have a name (UnityEngine.Object.name)
+            if (string.Equals(slotItem.name, target, System.StringComparison.OrdinalIgnoreCase))
+                return i;
+        }
+        Debug.Log("item not found - cant remove "+itemName);
+        return -1; // Not found
     }
    
 

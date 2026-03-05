@@ -184,6 +184,10 @@ export class player {
 
     getposition()
     {return this.position.clone();}
+    getLevel()
+    {
+        return this.level;
+    }
 
 
 
