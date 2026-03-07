@@ -3,40 +3,53 @@ using Yarn.Unity;
 
 public class YarnCommands : MonoBehaviour
 {
+    [SerializeField] private DialogueRunner dialogueRunner;
     //[SerializeField] private QuestManager questManager;
-    [SerializeField] private InventoryManager inventoryManager;
-    
-    /*[YarnCommand("start_quest")]
-    public void StartQuest(string questId)
-    {
-        questManager.StartQuest(questId);
-    }
 
-    [YarnCommand("complete_quest")]
-    public void CompleteQuest(string questId)
+    private void Awake()
     {
-        questManager.CompleteQuest(questId);
-    }*/
-
-    [YarnCommand("give_item")]
-    public void GiveItem(string itemId, int amount)
-    {
-        NetworkClient.Instance.Send("add-item", new AddItemRequest
+        if (dialogueRunner == null)
         {
-            itemName = itemId
-        });
+            Debug.LogError("DialogueRunner missing on YarnCommands");
+            return;
+        }
+
+        dialogueRunner.AddCommandHandler<string, int>("give_item", GiveItem);
+        dialogueRunner.AddCommandHandler<string>("remove_item", RemoveItem);
+       // dialogueRunner.AddCommandHandler<string>("start_quest", StartQuest);
+       // dialogueRunner.AddCommandHandler<string>("complete_quest", CompleteQuest);
     }
-    [YarnCommand("remove_item")]
-    public void RemoveItem(string itemId)
+
+    private void GiveItem(string itemId, int amount)
+    {
+        Debug.Log("give_item: " + itemId + " x" + amount);
+
+        for (int i = 0; i < amount; i++)
+        {
+            NetworkClient.Instance.Send("add-item", new AddItemRequest
+            {
+                itemName = itemId
+            });
+        }
+    }
+
+    private void RemoveItem(string itemId)
     {
         NetworkClient.Instance.Send("remove-item", new RemoveItemRequest
         {
             itemName = itemId
         });
-    }/*
-    [YarnFunction("search_item")]
-    public bool GetItem(string itemName)
+    }
+
+    /*private void StartQuest(string questId)
     {
-       return InventoryManager.Instance.SearchForItemByName(itemName)!=-1;
+        if (questManager != null)
+            questManager.StartQuest(questId);
+    }
+
+    private void CompleteQuest(string questId)
+    {
+        if (questManager != null)
+            questManager.CompleteQuest(questId);
     }*/
 }

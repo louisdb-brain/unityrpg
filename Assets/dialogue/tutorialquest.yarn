@@ -1,0 +1,10 @@
+﻿title: TutorialQuest
+---
+Guide: Hello, i'm glad you have woken up. For a moment I thought you wouldn't wake up. 
+-> What happened to me?
+    Guide: I have no idea, I found you unconcious in the forest and decided to bring you to my cabin.
+-> Do you have any quests for me?
+    Guide: Don't be so hasty, you should rest a bit. Here eat this manaherb.
+    <<give_item manaherb 1>> 
+Guide:Safe travels.
+===

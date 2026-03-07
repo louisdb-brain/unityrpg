@@ -30,9 +30,11 @@ export class dynamicObjectsManager {
 
     pickupLoot(id, socketid) {
         const lootObj = this.loot[id];
+        console.log("try loot pickup")
         if (!lootObj) return;
-
-        if(playermanager.additem(socketid, lootObj.name))
+        console.log("pickupLoot", lootObj);
+        const added=playermanager.addItem(socketid, lootObj.name)
+        if(added)
         {
             delete this.loot[id];
             this.net.broadcast("loot-picked", { id });

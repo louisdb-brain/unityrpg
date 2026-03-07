@@ -81,14 +81,20 @@ export const playermanager = {
             players[id].wantedlevel = pwantedlevel;
         }
     },
-    additem(id,itemname)
-    {
+    addItem(id, itemname) {
         const player = players?.[id];
-        if (!player || !player.inventory || typeof player.inventory.addItem !== "function") {
+
+        if (!player?.inventory) {
+            console.log("No player or inventory for id:", id);
             return false;
         }
-        return players[id].inventory.additem(itemname)
 
+        if (typeof player.inventory.additem !== "function") {
+            console.log("Inventory addItem function missing for player:", id);
+            return false;
+        }
+
+        return player.inventory.additem(itemname);
     },
     removeitem(id,itemname)
     {

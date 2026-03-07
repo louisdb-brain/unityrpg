@@ -2,6 +2,7 @@ using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Yarn;
 using Yarn.Unity;
 
 public class CustomDialoguePresenter : DialoguePresenterBase
@@ -19,90 +20,147 @@ public class CustomDialoguePresenter : DialoguePresenterBase
     [SerializeField] private Transform optionsContainer;
     [SerializeField] private Button optionButtonPrefab;
 
-    private CancellationTokenSource continueTokenSource;
+    private bool continuePressed;
 
     private void Awake()
     {
-        if (dialoguePanel != null) dialoguePanel.SetActive(false);
-        if (optionsPanel != null) optionsPanel.SetActive(false);
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(false);
+
+        if (optionsPanel != null)
+            optionsPanel.SetActive(false);
+
+        if (continueButton != null)
+            continueButton.onClick.AddListener(OnContinuePressed);
     }
 
-    public override async YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken token)
+    private void OnDestroy()
     {
-        if (dialoguePanel != null) dialoguePanel.SetActive(true);
-        if (optionsPanel != null) optionsPanel.SetActive(false);
+        if (continueButton != null)
+            continueButton.onClick.RemoveListener(OnContinuePressed);
+    }
+
+    private void OnContinuePressed()
+    {
+        continuePressed = true;
+    }
+
+    public override YarnTask OnDialogueStartedAsync()
+    {
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(true);
+
+        if (optionsPanel != null)
+            optionsPanel.SetActive(false);
+
+        return YarnTask.CompletedTask;
+    }
+
+    public override YarnTask OnDialogueCompleteAsync()
+    {
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(false);
+
+        if (optionsPanel != null)
+            optionsPanel.SetActive(false);
+
+        ClearOptions();
 
         if (speakerNameText != null)
-            speakerNameText.text = string.IsNullOrEmpty(line.CharacterName) ? "" : line.CharacterName;
+            speakerNameText.text = string.Empty;
 
         if (lineText != null)
-            lineText.text = line.Text.Text;
+            lineText.text = string.Empty;
+
+        return YarnTask.CompletedTask;
+    }
+
+    public override async YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken cancellationToken)
+    {
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(true);
+
+        if (optionsPanel != null)
+            optionsPanel.SetActive(false);
+
+        string fullText = line.Text.Text;
+        string speaker = "";
+        string body = fullText;
+
+        int colonIndex = fullText.IndexOf(':');
+        if (colonIndex > 0)
+        {
+            speaker = fullText.Substring(0, colonIndex).Trim();
+            body = fullText.Substring(colonIndex + 1).Trim();
+        }
+
+        if (speakerNameText != null)
+            speakerNameText.text = speaker;
+
+        if (lineText != null)
+            lineText.text = body;
 
         if (continueButton != null)
             continueButton.gameObject.SetActive(true);
 
-        // Wait for player to press Continue or for Yarn to request advancing
-        continueTokenSource?.Cancel();
-        continueTokenSource = new CancellationTokenSource();
+        continuePressed = false;
 
-        void OnContinue()
+        while (!continuePressed && !cancellationToken.NextLineToken.IsCancellationRequested)
         {
-            if (!continueTokenSource.IsCancellationRequested)
-                continueTokenSource.Cancel();
-        }
-
-        continueButton.onClick.AddListener(OnContinue);
-
-        try
-        {
-            while (!token.IsNextLineRequested && !continueTokenSource.IsCancellationRequested)
-                await YarnTask.Yield();
-        }
-        finally
-        {
-            continueButton.onClick.RemoveListener(OnContinue);
+            await YarnTask.Yield();
         }
     }
 
-    public override async YarnTask<DialogueOption> RunOptionsAsync(DialogueOption[] options, CancellationToken cancellationToken)
+    public override async YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions, CancellationToken cancellationToken)
     {
-        if (dialoguePanel != null) dialoguePanel.SetActive(true);
-        if (optionsPanel != null) optionsPanel.SetActive(true);
+        if (optionsPanel != null)
+            optionsPanel.SetActive(true);
 
         if (continueButton != null)
             continueButton.gameObject.SetActive(false);
 
-        // Clear old option buttons
-        for (int i = optionsContainer.childCount - 1; i >= 0; i--)
-            Destroy(optionsContainer.GetChild(i).gameObject);
+        ClearOptions();
 
-        DialogueOption selected = null;
+        DialogueOption? selectedOption = null;
 
-        for (int i = 0; i < options.Length; i++)
+        for (int i = 0; i < dialogueOptions.Length; i++)
         {
-            DialogueOption option = options[i];
+            DialogueOption option = dialogueOptions[i];
 
-            Button b = Instantiate(optionButtonPrefab, optionsContainer);
-            b.gameObject.SetActive(true);
+            Button buttonInstance = Instantiate(optionButtonPrefab, optionsContainer);
+            buttonInstance.gameObject.SetActive(true);
 
-            TMP_Text t = b.GetComponentInChildren<TMP_Text>();
-            if (t != null)
-                t.text = option.Line.Text.Text;
+            TMP_Text buttonText = buttonInstance.GetComponentInChildren<TMP_Text>();
+            if (buttonText != null)
+                buttonText.text = option.Line.Text.Text;
 
-            b.onClick.AddListener(() => selected = option);
+            buttonInstance.onClick.AddListener(() =>
+            {
+                selectedOption = option;
+            });
         }
 
-        // Wait until a button is clicked or cancelled
-        while (selected == null && !cancellationToken.IsCancellationRequested)
+        while (selectedOption == null && !cancellationToken.IsCancellationRequested)
+        {
             await YarnTask.Yield();
+        }
 
-        if (optionsPanel != null) optionsPanel.SetActive(false);
-        return selected;
+        if (optionsPanel != null)
+            optionsPanel.SetActive(false);
+
+        ClearOptions();
+
+        return selectedOption;
     }
 
-    public override void DialogueComplete()
+    private void ClearOptions()
     {
-        if (dialoguePanel != null) dialoguePanel.SetActive(false);
-        if (optionsPanel != null) optionsPanel.SetActive(false);
+        if (optionsContainer == null)
+            return;
+
+        for (int i = optionsContainer.childCount - 1; i >= 0; i--)
+        {
+            Destroy(optionsContainer.GetChild(i).gameObject);
+        }
     }
 }

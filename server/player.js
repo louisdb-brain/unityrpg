@@ -51,7 +51,7 @@ export class player {
 
         this.level=level;
 
-        this.inventory=new inventory(this.id,this.emit,20);
+        this.inventory=new inventory(this.id,this.emit,12);
         //this.equipWeapon({name:"mithrilsword",power:"10",speed:"2.5"})
     }
 

@@ -125,6 +125,7 @@ public static class NetworkMessageRouter
 
             case "loot-picked":
             {
+                Debug.Log("picking loot");
                 if (ClientLootManager.Instance == null)
                 {
                     Debug.LogError("ClientLootManager not ready — loot-picked dropped");

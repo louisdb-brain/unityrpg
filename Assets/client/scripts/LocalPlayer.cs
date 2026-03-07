@@ -59,7 +59,15 @@ public class LocalPlayer : PlayerBase
             switch (hit.collider.tag)
             {
                 case "NPC":
-                break;
+                    break;
+                case "NPC_TALKER": 
+                    GameObject talkeObject=hit.collider.gameObject;
+                    Debug.Log(("hit ping"));
+                    if (hit.collider.TryGetComponent<DialogueStarter>(out var talk))
+                    {
+                        talk.ShowInteract();
+                    }                    
+                    break;
                 case "Player":
                     //used for inspecting and trading
                 case "NODE":

@@ -44,7 +44,7 @@ public class LootWorldObject : MonoBehaviour
 
         if (string.IsNullOrEmpty(lootId))
             return;
-
+            Debug.Log("pickign up loot : "+gameObject.name);
         NetworkClient.Instance.Send("loot-pickup", new LootPickupRequest
         {
             id = lootId

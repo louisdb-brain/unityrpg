@@ -115,8 +115,7 @@ function handleClientMessage(ws, msg) {
                 y: 0,
                 z: 0
             });
-            playermanager.additem(ws.id, "manaherb");
-            playermanager.additem(ws.id, "butter");
+            
             console.log("data sent player spawned")
             break;
 
@@ -187,7 +186,7 @@ function handleClientMessage(ws, msg) {
             const data = typeof msg.data === "string"
                 ? JSON.parse(msg.data)
                 : msg.data;
-            if(!playermanager.additem(ws.id,data.itemName))
+            if(!playermanager.addItem(ws.id,data.itemName))
             {
                 const player=playermanager.getPlayer(ws.id).position;
                 const playerpos=player.getposition();
