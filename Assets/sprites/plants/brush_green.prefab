@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3268879770606186398}
   - component: {fileID: 1185455165907034714}
   - component: {fileID: -8337733175871396685}
+  - component: {fileID: -5619597931967656532}
   m_Layer: 0
   m_Name: brush_green
   m_TagString: Untagged
@@ -101,7 +102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7177138fff861044b6c9b824f26132f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  groundY: 0
+  groundOffset: 0.1
   shadowOffset: {x: 0.25, y: 0.25}
   shadowScale: 1
   shadowColor: {r: 0, g: 0, b: 0, a: 0.45}
@@ -127,3 +128,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5.65, y: 3.4, z: 0.2}
   m_Center: {x: 0, y: 1.7, z: 0}
+--- !u!114 &-5619597931967656532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6316747477187302315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfc465c503dd425a98252d01b04e6126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  triggerDistance: 1.5
+  squashYScale: 0.6
+  maxBendAngle: 50
+  smoothSpeed: 3

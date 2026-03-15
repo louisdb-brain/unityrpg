@@ -15,7 +15,7 @@ public class LocalPlayer : PlayerBase
 
     void Start()
     {
-        NetworkClient.Instance.Send("request-inventory",JsonUtility.FromJson<PlayerIdPacket>(playerId));
+        NetworkClient.Instance.Send("request-inventory",new PlayerIdPacket { playerId = playerId });
     }
 
     void Update()

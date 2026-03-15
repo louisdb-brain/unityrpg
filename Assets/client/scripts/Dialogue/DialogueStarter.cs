@@ -25,7 +25,7 @@ public class DialogueStarter : MonoBehaviour
 
     public void ShowInteract()
     {
-        Debug.Log("show interact");
+        Debug.Log("show interact "+gameObject.name);
         showInteractBool = true;
     }
 }
