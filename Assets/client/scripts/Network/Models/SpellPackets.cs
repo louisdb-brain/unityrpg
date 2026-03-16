@@ -10,7 +10,9 @@ public class CastSpellPacket
 {
     public string spellId;
     public string prefabName;
-
+    
+    public string casterId;
+    
     public Vector3 position;
     public Vector3 direction;
 
@@ -18,6 +20,7 @@ public class CastSpellPacket
     public float radius;
     public int damage;
     public float lifetime;
+    public int knockback;
 }
 
 /*
@@ -38,6 +41,7 @@ public class SpellSpawnPacket
     public float speed;
     public float lifetime;
     public float radius;
+    
 }
 
 
@@ -84,4 +88,11 @@ public class SpellDamagePacket
     public string spellId;
     public string targetId;
     public int amount;
+}
+
+[Serializable]
+public class SpellCollisionPacket
+{
+    public string SpellId;
+    public string TargetId;
 }

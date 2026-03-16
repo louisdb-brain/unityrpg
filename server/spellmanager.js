@@ -7,7 +7,7 @@ export class SpellManager {
         this.net = net;
         this.npcManager = npcManager;
         this.playerManager = playerManager;
-        this.activeSpells = [];
+        this.activeSpells = {};
     }
 
     castSpell(casterId, rawData) {
@@ -24,10 +24,11 @@ export class SpellManager {
             d.lifetime,
             d.position,
             d.direction,
-            d.speed
+            d.speed,
+            d.knockback
         );
 
-        this.activeSpells.push(spell);
+        this.activeSpells[d.spellId]=spell;
 
         this.net.broadcast("spell-spawn", {
             id: spell.id,
@@ -42,16 +43,14 @@ export class SpellManager {
     }
 
 
-
-
     update(delta) {
-        for (let i = this.activeSpells.length - 1; i >= 0; i--) {
-            const spell = this.activeSpells[i];
+        for (const id in this.activeSpells) {
+            const spell = this.activeSpells[id];
 
-            // 1. Move spell
+            if (!spell) continue;
+
             spell.update(delta);
 
-            // 2. Broadcast authoritative position
             this.net.broadcast("spell-update", {
                 id: spell.id,
                 position: {
@@ -61,24 +60,42 @@ export class SpellManager {
                 }
             });
 
-            // 3. Check collisions (returns true if hit)
-            const hit = this.checkCollisions(spell);
-            if (hit) {
-                this.net.broadcast("spell-despawn", { id: spell.id });
-                this.activeSpells.splice(i, 1);
-                continue;
-            }
-
-            // 4. Lifetime expiry
             if (spell.time <= 0) {
                 this.net.broadcast("spell-despawn", { id: spell.id });
-                this.activeSpells.splice(i, 1);
+                delete this.activeSpells[id];
             }
         }
     }
 
 
 
+    collideSpell(id, targetId) {
+
+        if (!this.npcManager.npcs[targetId]) {
+            console.log("collided spell target not found");
+            return;
+        }
+
+        if (!this.activeSpells[id]) {
+            console.log("active spell doesn't exist");
+            return;
+        }
+
+        const spell = this.activeSpells[id];
+        const npc = this.npcManager.npcs[targetId];
+
+        npc.takeDamage(spell.damage);
+        npc.applyKnockback(spell.position,spell.knockback)
+
+        this.net.broadcast("npc-takedamage", {
+            id: targetId,
+            amount: spell.damage
+        });
+
+        this.net.broadcast("spell-despawn", { id: spell.id });
+
+        delete this.activeSpells[id];
+    }
     checkCollisions(spell) {
         // Prevent multiple hits
         if (spell.dealtdamage) return false;

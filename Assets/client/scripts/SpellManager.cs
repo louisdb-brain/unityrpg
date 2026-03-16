@@ -4,9 +4,8 @@ using UnityEngine;
 public class SpellManager : MonoBehaviour
 {
     public static SpellManager Instance;
-
     public SpellDatabase spellDatabase;
-
+    
     private readonly Dictionary<string, GameObject> activeSpells = new();
 
     void Awake()
@@ -47,6 +46,9 @@ public class SpellManager : MonoBehaviour
             Quaternion.LookRotation(p.direction),
             transform // parent = SpellManager GameObject
         );
+        
+        spell.gameObject.GetComponent<SpellCollider>().id = p.id;
+        spell.gameObject.GetComponent<SpellCollider>().casterId = PlayerManager.Instance.localPlayerId;
 
         activeSpells[p.id] = spell;
     }

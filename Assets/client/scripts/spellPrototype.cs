@@ -11,4 +11,5 @@ public class SpellPrototype : ScriptableObject
     public float radius = 2f;
     public int damage = 5;
     public float lifetime = 1.5f;
+    public int knockback = 5;
 }

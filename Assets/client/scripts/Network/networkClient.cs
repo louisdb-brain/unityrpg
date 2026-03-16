@@ -47,18 +47,12 @@ public class NetworkClient : MonoBehaviour
         await ws.SendText(json);
     }
 
-
-
-
     void Update()
     {
         if (ws != null)
         {
             ws.DispatchMessageQueue();
         }
-        
-
-        
     }
 
 

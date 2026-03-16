@@ -152,14 +152,20 @@ function handleClientMessage(ws, msg) {
             gamestate.spellManager.castSpell(ws.id,msg.data);
 
             break;
+        case "collision-spell-npc":
+            const data = typeof msg.data === "string"
+                ? JSON.parse(msg.data)
+                : msg.data;
+            console.log("collide spell "+data.SpellId)
+            gamestate.spellManager.collideSpell(data.SpellId,data.TargetId)
 
+            break;
         case "loot-spawn-request": {
             const data = typeof msg.data === "string"
                 ? JSON.parse(msg.data)
                 : msg.data;
 
             if (gamestate.objectManager.loot[data.id]) return;
-
 
             gamestate.objectManager.spawnLoot(
                 data.id,

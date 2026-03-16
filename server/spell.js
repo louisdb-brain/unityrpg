@@ -10,7 +10,8 @@ export class Spell {
         lifetime,
         position,
         direction,   // ✅ forward direction (Vector3 or {x,y,z})
-        speed        // ✅ units per second
+        speed,        // ✅ units per second
+        knockback
     ) {
         this.id = id;
         this.caster = caster;
@@ -35,6 +36,7 @@ export class Spell {
 
         this.radius = radius;
         this.damage = damage;
+        this.knockback=knockback;
         this.time = lifetime; // ms
         this.dealtdamage = false;
     }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Yarn.Unity;
 
@@ -7,6 +8,12 @@ public class DialogueStarter : MonoBehaviour
     [SerializeField] private string startNode = "TutorialQuest";
     private bool showInteractBool = false;
     public GameObject interactText;
+
+    private void Start()
+    {
+        dialogueRunner = GameObject.Find("Dialogue_ui").GetComponent<DialogueRunner>();
+        Debug.Log("DIALOGUERUNNER IS "+dialogueRunner);
+    }
 
     private void Update()
     {

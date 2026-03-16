@@ -125,13 +125,17 @@ public class LocalPlayer : PlayerBase
     void CastSpell()
     {
         if (activeSpell == null) return;
-
+        
+        string uniqueId = System.Guid.NewGuid().ToString();
+        Debug.unityLogger.Log(uniqueId);
+        
         NetworkClient.Instance.Send(
             "spellcast",
             new CastSpellPacket
             {
-                spellId = System.Guid.NewGuid().ToString(),
+                spellId =uniqueId ,
                 prefabName = activeSpell.prefabName,
+                casterId = playerId,
 
                 position = transform.position,
                 direction = LastMoveDirection,
@@ -139,7 +143,8 @@ public class LocalPlayer : PlayerBase
                 speed = activeSpell.speed,
                 radius = activeSpell.radius,
                 damage = activeSpell.damage,
-                lifetime = activeSpell.lifetime
+                lifetime = activeSpell.lifetime,
+                knockback=activeSpell.knockback
             }
         );
     }

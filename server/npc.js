@@ -19,10 +19,13 @@ export class npc {
         );
 
         // === STATS ===
-        this.health = 10;
+        this.health = 30;
         this.attack = 2;
         this.speed = 3;
         this.attackspeed = 3;
+
+        this.knockback = new THREE.Vector3(0,0,0);
+        this.knockbackDecay = 0.85;
 
         this.detectionRadius = 10;
         this.boidsRadius = 10;
@@ -83,6 +86,12 @@ export class npc {
     }
 
     move(delta) {
+        // apply knockback first
+        if (this.knockback.lengthSq() > 0.0001) {
+            this.position.add(this.knockback.clone().multiplyScalar(delta));
+            this.knockback.multiplyScalar(this.knockbackDecay);
+            return;
+        }
         if (this.hitTime > 0) return;
 
         const direction = new THREE.Vector3()
@@ -99,9 +108,16 @@ export class npc {
 
         this.detectionsphere.center.copy(this.position);
     }
+    applyKnockback(fromPosition, force = 8) {
 
+        const dir = new THREE.Vector3()
+            .subVectors(this.position, fromPosition)
+            .normalize();
+
+        this.knockback.copy(dir.multiplyScalar(force));
+    }
     // ==========================
-    // FOLLOW PLAYERS (DISABLED)
+    // FOLLOW PLAYERS
     // ==========================
     checkFollow(players) {
         for (const id in players) {
