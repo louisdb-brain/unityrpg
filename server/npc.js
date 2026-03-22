@@ -2,8 +2,22 @@
 import * as THREE from "three";
 import crypto from "crypto";
 
+const NPCCombatState = {
+    IDLE: "idle",
+    ENGAGE: "engage",
+    ATTACK: "attack",
+    RETREAT: "retreat",
+    FLEE: "flee"
+};
+
+const NPCAttackChoice = {
+    NONE: "none",
+    MELEE: "melee",
+    SPELL: "spell"
+};
+
 export class npc {
-    constructor(pNpcID, positionObj, pName, net, objectManager, loot,rareloot, level) {
+    constructor(pNpcID, positionObj, pName, net, objectManager, loot, rareloot, level) {
         // === CORE ===
         this.net = net;
         this.objectManager = objectManager;
@@ -18,13 +32,16 @@ export class npc {
             positionObj.z
         );
 
+        this.spawnPosition = this.position.clone();
+
         // === STATS ===
+        this.maxHealth = 30;
         this.health = 30;
         this.attack = 2;
         this.speed = 3;
         this.attackspeed = 3;
 
-        this.knockback = new THREE.Vector3(0,0,0);
+        this.knockback = new THREE.Vector3(0, 0, 0);
         this.knockbackDecay = 0.85;
 
         this.detectionRadius = 10;
@@ -41,6 +58,10 @@ export class npc {
         this.hitTime = 0;
         this.hitTimer = 13;
 
+        this.attackCooldownTimer = 0;
+        this.retreatCooldownTimer = 0;
+        this.stateTimer = 0;
+
         // === LOOT ===
         this.loot = loot;
         this.rareloot = rareloot;
@@ -56,27 +77,71 @@ export class npc {
         this.cooldown = 50;
         this.angle = 0;
 
+        // === COMBAT STATE ===
+        this.combatState = NPCCombatState.IDLE;
+        this.attackChoice = NPCAttackChoice.NONE;
+        this.pendingSpell = null;
+
+        // === COMBAT CONFIG ===
+        this.combatConfig = {
+            detectionRange: this.detectionRadius,
+            meleeRange: this.attackRadius,
+            preferredDistance: 2,
+            fleeHealthThreshold: 0.2,
+            retreatDistance: 2,
+            retreatCooldown: 50,
+            attackCooldown: 50,
+            canMelee: true,
+            canBlock: false,
+            canDodge: false,
+            bravery: 0.5,
+            retreatChance: 0.25,
+            spells: []
+        };
+
         this._destroyed = false;
     }
 
-    update(delta, playersIgnored, allNpcs) {
+    update(delta, players, allNpcs) {
         if (this._destroyed) return;
 
-        if (this.hitTime > 0) this.hitTime--;
+        this.tickTimers();
 
-        this.aiupdate(delta);
+        switch (this.combatState) {
+            case NPCCombatState.IDLE:
+                this.tickIdle(delta, players);
+                break;
 
-        // FOLLOW PLAYER (still disabled by design)
-        this.checkFollow(playersIgnored);
+            case NPCCombatState.ENGAGE:
+                this.tickEngage(players);
+                break;
 
-        // COMBAT (disabled)
-        // this.handleCombat(playersIgnored);
+            case NPCCombatState.ATTACK:
+                this.tickAttack(players);
+                break;
 
-        // BOIDS AVOIDANCE
+            case NPCCombatState.RETREAT:
+                this.tickRetreat(players);
+                break;
+
+            case NPCCombatState.FLEE:
+                this.tickFlee(players);
+                break;
+
+            default:
+                this.combatState = NPCCombatState.IDLE;
+                break;
+        }
+
         this.checkAvoid(allNpcs);
-
-        // MOVE
         this.move(delta);
+    }
+
+    tickTimers() {
+        if (this.hitTime > 0) this.hitTime--;
+        if (this.attackCooldownTimer > 0) this.attackCooldownTimer--;
+        if (this.retreatCooldownTimer > 0) this.retreatCooldownTimer--;
+        if (this.stateTimer > 0) this.stateTimer--;
     }
 
     setTarget(position) {
@@ -90,9 +155,14 @@ export class npc {
         if (this.knockback.lengthSq() > 0.0001) {
             this.position.add(this.knockback.clone().multiplyScalar(delta));
             this.knockback.multiplyScalar(this.knockbackDecay);
+            this.detectionsphere.center.copy(this.position);
             return;
         }
-        if (this.hitTime > 0) return;
+
+        if (this.hitTime > 0) {
+            this.detectionsphere.center.copy(this.position);
+            return;
+        }
 
         const direction = new THREE.Vector3()
             .subVectors(this.targetPosition, this.position);
@@ -108,33 +178,339 @@ export class npc {
 
         this.detectionsphere.center.copy(this.position);
     }
-    applyKnockback(fromPosition, force = 8) {
 
+    applyKnockback(fromPosition, force = 8) {
         const dir = new THREE.Vector3()
             .subVectors(this.position, fromPosition)
             .normalize();
 
         this.knockback.copy(dir.multiplyScalar(force));
     }
+
     // ==========================
-    // FOLLOW PLAYERS
+    // TARGETING
     // ==========================
-    checkFollow(players) {
+    getTargetPlayer(players) {
+        let closest = null;
+        let closestDistance = Infinity;
+
         for (const id in players) {
             const player = players[id];
+            if (!player || !player.position) continue;
+
             const pos = new THREE.Vector3(
                 player.position.x,
                 player.position.y,
                 player.position.z
             );
 
-            if (this.detectionsphere.containsPoint(pos)) {
-                this.targetPlayerId = id;
-                this.setTarget(pos);
-                return;
+            const distance = this.position.distanceTo(pos);
+
+            if (distance <= this.combatConfig.detectionRange && distance < closestDistance) {
+                closest = {
+                    id,
+                    player,
+                    position: pos
+                };
+                closestDistance = distance;
             }
         }
+
+        return closest;
+    }
+
+    // Kept for compatibility / transition.
+    // Now it only acquires a target and does not force chase movement.
+    checkFollow(players) {
+        const target = this.getTargetPlayer(players);
+
+        if (target) {
+            this.targetPlayerId = target.id;
+            return true;
+        }
+
         this.targetPlayerId = null;
+        return false;
+    }
+
+    // ==========================
+    // COMBAT STATES
+    // ==========================
+    tickIdle(delta, players) {
+        const foundTarget = this.checkFollow(players);
+
+        if (foundTarget) {
+            this.combatState = NPCCombatState.ENGAGE;
+            return;
+        }
+
+        this.attackChoice = NPCAttackChoice.NONE;
+        this.pendingSpell = null;
+
+        this.aiupdate(delta);
+    }
+
+    tickEngage(players) {
+        const target = this.getTargetPlayer(players);
+
+        if (!target) {
+            this.targetPlayerId = null;
+            this.attackChoice = NPCAttackChoice.NONE;
+            this.pendingSpell = null;
+            this.combatState = NPCCombatState.IDLE;
+            return;
+        }
+
+        this.targetPlayerId = target.id;
+
+        const distance = this.position.distanceTo(target.position);
+        const healthPercent = this.maxHealth > 0 ? this.health / this.maxHealth : 0;
+
+        if (healthPercent <= this.combatConfig.fleeHealthThreshold) {
+            this.combatState = NPCCombatState.FLEE;
+            return;
+        }
+
+        if (this.shouldRetreat(distance)) {
+            this.combatState = NPCCombatState.RETREAT;
+            this.stateTimer = 12;
+            this.retreatCooldownTimer = this.combatConfig.retreatCooldown;
+            return;
+        }
+
+        if (this.tryChooseAttack(distance)) {
+            this.combatState = NPCCombatState.ATTACK;
+            this.stateTimer = 10;
+            return;
+        }
+
+        this.moveToCombatPosition(target.position, distance);
+    }
+
+    tickAttack(players) {
+        const target = this.getTargetPlayer(players);
+
+        if (!target) {
+            this.targetPlayerId = null;
+            this.attackChoice = NPCAttackChoice.NONE;
+            this.pendingSpell = null;
+            this.combatState = NPCCombatState.IDLE;
+            return;
+        }
+
+        this.targetPlayerId = target.id;
+
+        // stop while winding up
+        this.setTarget(this.position.clone());
+
+        if (this.stateTimer > 0) {
+            return;
+        }
+
+        switch (this.attackChoice) {
+            case NPCAttackChoice.MELEE:
+                this.performMeleeAttack(players);
+                this.attackCooldownTimer = this.combatConfig.attackCooldown;
+                break;
+
+            case NPCAttackChoice.SPELL:
+                this.performSpellAttack(players);
+                break;
+        }
+
+        this.attackChoice = NPCAttackChoice.NONE;
+        this.pendingSpell = null;
+        this.combatState = NPCCombatState.ENGAGE;
+    }
+
+    tickRetreat(players) {
+        const target = this.getTargetPlayer(players);
+
+        if (!target) {
+            this.targetPlayerId = null;
+            this.combatState = NPCCombatState.IDLE;
+            return;
+        }
+
+        this.targetPlayerId = target.id;
+
+        const away = this.position.clone().sub(target.position);
+        away.y = 0;
+
+        if (away.lengthSq() <= 0.0001) {
+            away.set(1, 0, 0);
+        } else {
+            away.normalize();
+        }
+
+        const retreatTarget = this.position.clone().add(
+            away.multiplyScalar(this.combatConfig.retreatDistance)
+        );
+
+        this.setTarget(retreatTarget);
+
+        if (this.stateTimer <= 0) {
+            this.combatState = NPCCombatState.ENGAGE;
+        }
+    }
+
+    tickFlee(players) {
+        const target = this.getTargetPlayer(players);
+
+        if (!target) {
+            this.targetPlayerId = null;
+            this.setTarget(this.spawnPosition.clone());
+            this.combatState = NPCCombatState.IDLE;
+            return;
+        }
+
+        this.targetPlayerId = target.id;
+
+        const distance = this.position.distanceTo(target.position);
+
+        if (distance > this.combatConfig.detectionRange * 1.5) {
+            this.targetPlayerId = null;
+            this.setTarget(this.spawnPosition.clone());
+            this.combatState = NPCCombatState.IDLE;
+            return;
+        }
+
+        const away = this.position.clone().sub(target.position);
+        away.y = 0;
+
+        if (away.lengthSq() <= 0.0001) {
+            away.set(1, 0, 0);
+        } else {
+            away.normalize();
+        }
+
+        const fleeTarget = this.position.clone().add(away.multiplyScalar(8));
+        this.setTarget(fleeTarget);
+    }
+
+    // ==========================
+    // COMBAT DECISIONS
+    // ==========================
+    shouldRetreat(distance) {
+        if (this.retreatCooldownTimer > 0) return false;
+        if (distance > this.combatConfig.meleeRange * 0.8) return false;
+
+        return Math.random() < this.combatConfig.retreatChance;
+    }
+
+    tryChooseAttack(distance) {
+        this.attackChoice = NPCAttackChoice.NONE;
+        this.pendingSpell = null;
+
+        if (
+            this.combatConfig.canMelee &&
+            this.attackCooldownTimer <= 0 &&
+            distance <= this.combatConfig.meleeRange
+        ) {
+            this.attackChoice = NPCAttackChoice.MELEE;
+            return true;
+        }
+
+        const spell = this.tryChooseSpell(distance);
+        if (spell) {
+            this.pendingSpell = spell;
+            this.attackChoice = NPCAttackChoice.SPELL;
+            return true;
+        }
+
+        return false;
+    }
+
+    tryChooseSpell(distance) {
+        if (!this.combatConfig.spells || this.combatConfig.spells.length === 0) {
+            return null;
+        }
+
+        for (const spell of this.combatConfig.spells) {
+            if (!spell) continue;
+
+            // SpellPrototype has prefabName and combat stats already on the Unity side.
+            // For now we only use radius if it exists as a rough range fallback.
+            if (spell.range != null && distance > spell.range) continue;
+
+            return spell;
+        }
+
+        return null;
+    }
+
+    moveToCombatPosition(targetPosition, distance) {
+        const preferred = this.combatConfig.preferredDistance;
+
+        if (distance > preferred + 0.5) {
+            this.setTarget(targetPosition);
+            return;
+        }
+
+        if (distance < preferred - 0.5) {
+            const away = this.position.clone().sub(targetPosition);
+            away.y = 0;
+
+            if (away.lengthSq() <= 0.0001) {
+                away.set(1, 0, 0);
+            } else {
+                away.normalize();
+            }
+
+            const stepBackTarget = this.position.clone().add(away.multiplyScalar(1.5));
+            this.setTarget(stepBackTarget);
+            return;
+        }
+
+        this.setTarget(this.position.clone());
+    }
+
+    // ==========================
+    // ATTACK EXECUTION
+    // ==========================
+    performMeleeAttack(players) {
+        if (!this.targetPlayerId) return;
+
+        const player = players[this.targetPlayerId];
+        if (!player || !player.position) return;
+
+        const playerPos = new THREE.Vector3(
+            player.position.x,
+            player.position.y,
+            player.position.z
+        );
+
+        const distance = this.position.distanceTo(playerPos);
+        if (distance > this.combatConfig.meleeRange) return;
+
+        if (typeof player.takeDamage === "function") {
+            player.takeDamage(this.attack);
+        }
+
+        if (this.net) {
+            this.net.broadcast("npc-attack", {
+                id: this.npcid,
+                name: this.name,
+                targetId: this.targetPlayerId,
+                type: "melee",
+                damage: this.attack
+            });
+        }
+    }
+
+    performSpellAttack(players) {
+        if (!this.pendingSpell) return;
+
+        if (this.net) {
+            this.net.broadcast("npc-cast", {
+                id: this.npcid,
+                name: this.name,
+                targetId: this.targetPlayerId,
+                prefabName: this.pendingSpell.prefabName || null
+            });
+        }
+
+        this.attackCooldownTimer = this.combatConfig.attackCooldown;
     }
 
     // ==========================
@@ -209,6 +585,8 @@ export class npc {
         this._destroyed = true;
 
         this.targetPlayerId = null;
+        this.attackChoice = NPCAttackChoice.NONE;
+        this.pendingSpell = null;
 
         // === SPAWN LOOT (FIXED) ===
         if (
