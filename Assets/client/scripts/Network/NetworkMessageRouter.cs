@@ -18,6 +18,10 @@ public static class NetworkMessageRouter
 
         switch (packet.type)
         {
+            case "DEBUG-npcstate":
+                
+                NPCManager.Instance.DEBUGNpcState(packet.data);
+                break;
             case "npc-position-update":
                 NPCManager.Instance.OnNPCUpdate(packet.data);
                 break;
@@ -25,6 +29,9 @@ public static class NetworkMessageRouter
             case "npc-takedamage":
                 NPCManager.Instance.OnNPCDamage(packet.data);
                 break;
+            case "player-takedamage":
+                break;
+            
 
             case "npc-kill":
                 NPCManager.Instance.OnNPCKill(packet.data);

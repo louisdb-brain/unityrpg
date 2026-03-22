@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class NPCController : MonoBehaviour
@@ -104,6 +105,12 @@ public class NPCController : MonoBehaviour
         health = Mathf.Max(0, health - amount);
         hitFlashTimer = damageFlashDuration;
         UpdateHealthbar();
+    }
+
+    public void DEBUGState(string state)
+    {
+        TextMeshPro debugtextbox = gameObject.GetComponentInChildren<TextMeshPro>();
+        debugtextbox.text = state;
     }
 
     

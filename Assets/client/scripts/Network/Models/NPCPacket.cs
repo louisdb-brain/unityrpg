@@ -24,3 +24,10 @@ public class NPCDamagePacket
     public string id;
     public int amount;
 }
+
+[System.Serializable]
+public class DEBUGNPCStatePacket
+{
+    public string id;
+    public string state;
+}

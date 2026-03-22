@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -92,6 +93,13 @@ public class NPCManager : MonoBehaviour
 
         // Destroy NPC GameObject
         Destroy(npc.gameObject);
+    }
+
+    public void DEBUGNpcState(string json)
+    {
+        DEBUGNPCStatePacket debug = JsonUtility.FromJson<DEBUGNPCStatePacket>(json);
+        Debug.Log(debug);
+        npcs[debug.id].DEBUGState(debug.state) ;
     }
 
 }
