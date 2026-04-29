@@ -1,9 +1,14 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+public enum dropZoneType
+{
+    DROPZONE,COOKING,SMITHING,CRAFTING,WEAPON,SHOP,QUEST
+}
 public class InventoryDropZone : MonoBehaviour, IDropHandler
 {
     public InventoryManager inventoryManager;
+    public dropZoneType zone;
 
     public void OnDrop(PointerEventData eventData)
     {
@@ -23,6 +28,15 @@ public class InventoryDropZone : MonoBehaviour, IDropHandler
             return;
 
         // Tell inventory to drop/remove the item
-        inventoryManager.DropItem(fromSlot);
+        switch (zone)
+        {
+            case dropZoneType.DROPZONE:
+                Debug.Log("DROPPED IN DROPZONE");
+                inventoryManager.DropItem(fromSlot);
+                break;
+            
+            
+        }
+        
     }
 }

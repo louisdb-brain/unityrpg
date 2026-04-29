@@ -20,4 +20,14 @@ public class DamagePopupSpawner : MonoBehaviour
 
         obj.GetComponent<DamagePopup>().SetDamage(amount);
     }
+    public void SpawnCombo(Vector3 position, int amount)
+    {
+        GameObject obj = Instantiate(
+            damagePopupPrefab,
+            position + Vector3.up * 1.5f,
+            Quaternion.identity
+        );
+
+        obj.GetComponent<DamagePopup>().setText("combo "+amount+"!");
+    }
 }

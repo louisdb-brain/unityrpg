@@ -24,6 +24,11 @@ public class DamagePopup : MonoBehaviour
         text.text = amount.ToString();
     }
 
+    public void setText(string pString)
+    {
+        text.text = pString;
+    }
+
     void Update()
     {
         // Move upward

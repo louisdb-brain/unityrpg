@@ -9,6 +9,14 @@ public class AddItemPacket
 [System.Serializable]
 public class RemoveItemPacket
 {
-    public string id;
-    public string name;
+    
+    public string playerId;
+    public string item;
+}
+
+[System.Serializable]
+public class dropInventoryLootPacket
+{
+    public string playerId;
+    public string itemName;
 }

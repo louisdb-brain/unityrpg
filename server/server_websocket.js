@@ -176,6 +176,16 @@ function handleClientMessage(ws, msg) {
 
             break;
         }
+        case "player-droploot":{
+            const data = typeof msg.data === "string"
+                ? JSON.parse(msg.data)
+                : msg.data;
+            if(data.itemName!=null&&data.playerId!=null) {
+                const player =playermanager.getPlayer(ws.id);
+                player.inventory.removeItemNoEmit(data.itemName)
+                gamestate.objectManager.spawnLoot(crypto.randomUUID(),data.itemName,player.position,player.level);
+            }
+        }
         case "loot-pickup": {
             const data = typeof msg.data === "string"
                 ? JSON.parse(msg.data)

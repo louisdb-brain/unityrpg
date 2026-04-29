@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class LocalPlayer : PlayerBase
@@ -7,6 +8,15 @@ public class LocalPlayer : PlayerBase
     public float particleInterval = 0.3f;
     public Vector3 particleOffset = new Vector3(0, 0.02f, 0);
     private float particleTimer = 0f;
+
+    [Header("combo timers")] 
+    public float hitInterval = 0.2f;
+    public float comboInterval = 1.5f;
+    public int combo = 0;
+    public int comboMax = 3;
+    private float hitTimer = 0f;
+    private bool canCast = true;
+    private bool hasAttacked = false;
 
     [Header("Spells")]
     public SpellPrototype activeSpell;
@@ -21,10 +31,59 @@ public class LocalPlayer : PlayerBase
     void Update()
     {
         UpdateMoveDirection();
-        HandleMovementParticles(); 
-        if (Input.GetKeyDown(KeyCode.Space))
+        HandleMovementParticles();
+        if (hasAttacked)
+        {
+            handleHitTimer();
+        }
+        if (Input.GetKeyDown(KeyCode.Space) && canCast)
         {
             CastSpell();
+            hasAttacked = true;
+            combo++;
+            if (DamagePopupSpawner.Instance != null)
+            {
+                DamagePopupSpawner.Instance.SpawnCombo(gameObject.transform.position, combo);
+            }
+        }
+    }
+
+    void handleHitTimer()
+    {
+        hitTimer += Time.deltaTime;
+        if (combo >= comboMax) //check if you reached max combo
+        {
+            if (hitTimer >= comboInterval)
+            {
+                hitTimer = 0f;
+                combo = 0;
+                hasAttacked = false;
+                canCast = true;
+            }
+            else
+            {
+                canCast = false;
+            }
+        }
+        else //you can still combo
+        {
+            if (hitTimer >= hitInterval)
+            {
+                hitTimer = 0f;
+                hasAttacked = false;
+                canCast = true;
+            }
+            else
+            {
+                canCast = false;
+            }
+        }
+        if (hitTimer >= hitInterval * 2 && combo < comboMax) //combo timout
+        {
+            hitTimer = 0f;
+            combo = 0;
+            hasAttacked = false;
+            canCast = true;
         }
     }
     

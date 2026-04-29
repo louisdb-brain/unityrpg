@@ -106,13 +106,13 @@ export class npc {
         if (this._destroyed) return;
 
         this.tickTimers();
-        if(this.net)
+        /*if(this.net)
         {
             this.net.broadcast("DEBUG-npcstate",{
                 id:this.npcid,
                 state:this.combatState
             })
-        }
+        }*/
         switch (this.combatState) {
             case NPCCombatState.IDLE:
                 this.tickIdle(delta, players);

@@ -44,11 +44,19 @@ export class inventory{
 
         if (index !== -1) {
             this.items.splice(index, 1);
-            this.emit('remove-item', itemName);
+            const payload={playerId:this.playerid,item:itemName};
+            this.emit('remove-item', payload);
             return true;  // removed successfully
         }
         console.log(this.items);
         return false; // nothing removed
+    }
+    removeItemNoEmit(itemName){
+        const index = this.items.findIndex(item => item.name === itemName);
+        if (index !== -1) {
+            this.items.splice(index, 1);
+            console.log("loot dropped :"+itemName+ " remaining inv: "+this.items);
+        }
     }
     getItems(){
         return this.items;

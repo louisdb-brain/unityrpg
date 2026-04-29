@@ -191,10 +191,11 @@ public static class NetworkMessageRouter
                 if (InventoryManager.Instance == null)
                 {
                     Debug.LogError("inventorymanager does not exist yet, add-item failed");
+                    return;
                 }
                 var data = JsonUtility.FromJson<RemoveItemPacket>(packet.data);
                 Debug.Log("remove-ITEM RAW DATA: " + packet.data);
-                if (data.id != PlayerManager.Instance.localPlayerId)
+                if (data.playerId != PlayerManager.Instance.localPlayerId)
                 {
                     Debug.LogError("not local player");
                     return;

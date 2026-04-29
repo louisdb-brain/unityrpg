@@ -11,6 +11,14 @@ public  class InventoryManager : MonoBehaviour
     public int slotCount = 28;
     [Header(" INVENTORY (Editor Only)")]
     public List<Item> Items = new List<Item>();
+    [Header("cooking inventory")]
+    public List<Item> cookingItems = new List<Item>();
+    public int cookingItemCount = 3;
+    public Transform cookingItemParent;
+    [Header("Smithing Inventory")]
+    public List<Item> SmithingItems = new List<Item>();
+    public int SmithingItemCount = 5;
+    public Transform SmithingItemParent;
 
     
     // =========================
@@ -259,8 +267,11 @@ public  class InventoryManager : MonoBehaviour
     
         // 🔥 game logic here
         // spawn loot, notify server, etc.
-        
-        
+
+        NetworkClient.Instance.Send("player-droploot", new dropInventoryLootPacket
+        {
+            itemName = Items[slotIndex].itemName,
+        });
         Items[slotIndex] = null;
         UpdateSlotUI(slotIndex);
     }
