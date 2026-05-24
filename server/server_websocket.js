@@ -165,11 +165,13 @@ function handleClientMessage(ws, msg) {
                 ? JSON.parse(msg.data)
                 : msg.data;
 
+            console.log("loot-spawn-request received:", data.itemId, data.id);
+
             if (gamestate.objectManager.loot[data.id]) return;
 
             gamestate.objectManager.spawnLoot(
                 data.id,
-                data.itemName,
+                data.itemId,
                 data.position,
                 data.level ?? 1
             );
@@ -180,11 +182,23 @@ function handleClientMessage(ws, msg) {
             const data = typeof msg.data === "string"
                 ? JSON.parse(msg.data)
                 : msg.data;
-            if(data.itemName!=null&&data.playerId!=null) {
-                const player =playermanager.getPlayer(ws.id);
-                player.inventory.removeItemNoEmit(data.itemName)
-                gamestate.objectManager.spawnLoot(crypto.randomUUID(),data.itemName,player.position,player.level);
+            if (!data?.itemId) break;
+
+            const player = playermanager.getPlayer(ws.id);
+            if (!player) break;
+
+            if (!player.inventory.removeItemNoEmit(data.itemId)) {
+                console.warn("player-droploot: item not in inventory", data.itemId, ws.id);
+                break;
             }
+
+            gamestate.objectManager.spawnLoot(
+                crypto.randomUUID(),
+                data.itemId,
+                player.getDropPosition(3),
+                player.level
+            );
+            break;
         }
         case "loot-pickup": {
             const data = typeof msg.data === "string"
@@ -202,20 +216,21 @@ function handleClientMessage(ws, msg) {
             const data = typeof msg.data === "string"
                 ? JSON.parse(msg.data)
                 : msg.data;
-            if(!playermanager.addItem(ws.id,data.itemName))
+            if(!playermanager.addItem(ws.id,data.itemId))
             {
                 const player=playermanager.getPlayer(ws.id).position;
                 const playerpos=player.getposition();
                 const playerlevel=player.getLevel();
-                gamestate.objectManager.spawnLoot(crypto.randomUUID(),data.itemName,playerpos,playerlevel)
+                gamestate.objectManager.spawnLoot(crypto.randomUUID(),data.itemId,playerpos,playerlevel)
             }
-
+            break;
         }
         case "remove-item":{
             const data = typeof msg.data === "string"
                 ? JSON.parse(msg.data)
                 : msg.data;
-            playermanager.getPlayer(ws.id).removeItem(data.id);
+            playermanager.removeitem(ws.id, data.itemId);
+            break;
         }
         case "request-inventory":{
 

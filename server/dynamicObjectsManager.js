@@ -13,12 +13,12 @@ export class dynamicObjectsManager {
     // LOOT
     // =========================
 
-    spawnLoot(id, itemName, position, level ) {
+    spawnLoot(id, itemId, position, level) {
         if (this.loot[id]) return; // dedupe safety
 
         const lootObj = new loot(
             id,
-            itemName,
+            itemId,
             level,
             position,
             this.net
@@ -30,17 +30,14 @@ export class dynamicObjectsManager {
 
     pickupLoot(id, socketid) {
         const lootObj = this.loot[id];
-        console.log("try loot pickup")
+        console.log("try loot pickup");
         if (!lootObj) return;
         console.log("pickupLoot", lootObj);
-        const added=playermanager.addItem(socketid, lootObj.name)
-        if(added)
-        {
+        const added = playermanager.addItem(socketid, lootObj.itemId);
+        if (added) {
             delete this.loot[id];
             this.net.broadcast("loot-picked", { id });
         }
-
-
     }
 
     // =========================

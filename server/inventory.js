@@ -1,5 +1,4 @@
 import {dynamicObjectsManager} from "./dynamicObjectsManager.js";
-import {randInt} from "three/src/math/MathUtils.js";
 
 export class inventory{
     constructor(playerid,emitCallback,holdMax){
@@ -11,26 +10,23 @@ export class inventory{
         this.items=[]
     }
 
-    additem(itemname)
+    additem(itemId)
     {
-
         if(this.items.length<this.holdmax){
-            this.items.push(itemname);
+            this.items.push(itemId);
             const payload={
                 id:this.playerid,
-                name:itemname
+                itemId:itemId
             }
-            console.log("[SERVER] Inventory additem:", itemname);
+            console.log("[SERVER] Inventory additem:", itemId);
             this.emit('add-item', payload);
             return true;
         }
         else{
-            //return false FOR DROPPING LOOT ON FLOOR;
             return false;
         }
-
-
     }
+
     emitInventory()
     {
         const payload={
@@ -39,25 +35,30 @@ export class inventory{
         }
         this.emit('emit-inventory',payload);
     }
-    removeitem(itemName) {
-        const index = this.items.findIndex(item => item.name === itemName);
+
+    removeitem(itemId) {
+        const index = this.items.indexOf(itemId);
 
         if (index !== -1) {
             this.items.splice(index, 1);
-            const payload={playerId:this.playerid,item:itemName};
+            const payload={playerId:this.playerid, itemId:itemId};
             this.emit('remove-item', payload);
-            return true;  // removed successfully
+            return true;
         }
         console.log(this.items);
-        return false; // nothing removed
+        return false;
     }
-    removeItemNoEmit(itemName){
-        const index = this.items.findIndex(item => item.name === itemName);
+
+    removeItemNoEmit(itemId){
+        const index = this.items.indexOf(itemId);
         if (index !== -1) {
             this.items.splice(index, 1);
-            console.log("loot dropped :"+itemName+ " remaining inv: "+this.items);
+            console.log("loot dropped :"+itemId+ " remaining inv: "+this.items);
+            return true;
         }
+        return false;
     }
+
     getItems(){
         return this.items;
     }

@@ -28,7 +28,7 @@ public class YarnCommands : MonoBehaviour
         {
             NetworkClient.Instance.Send("add-item", new AddItemRequest
             {
-                itemName = itemId
+                itemId = itemId
             });
         }
     }
@@ -37,7 +37,7 @@ public class YarnCommands : MonoBehaviour
     {
         NetworkClient.Instance.Send("remove-item", new RemoveItemRequest
         {
-            itemName = itemId
+            itemId = itemId
         });
     }
 

@@ -4,19 +4,19 @@ using UnityEngine;
 public class AddItemPacket
 {
     public string id;
-    public string name;
+    public string itemId;
 }
+
 [System.Serializable]
 public class RemoveItemPacket
 {
-    
     public string playerId;
-    public string item;
+    public string itemId;
 }
 
 [System.Serializable]
 public class dropInventoryLootPacket
 {
     public string playerId;
-    public string itemName;
+    public string itemId;
 }

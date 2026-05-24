@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public sealed class TalentTreeState
+public sealed class 
+    TalentTreeState
 {
     [SerializeField] private TalentTreeSO tree;
     [SerializeField] private int availablePoints;
-    [SerializeField] private List<string> unlockedNodeIds = new List<string>();
+    [SerializeField] public List<string> unlockedNodeIds = new List<string>();
 
     public TalentTreeSO Tree => tree;
     public int AvailablePoints => availablePoints;

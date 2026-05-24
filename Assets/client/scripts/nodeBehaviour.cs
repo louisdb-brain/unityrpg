@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class nodeBehaviour: MonoBehaviour
@@ -9,9 +8,21 @@ public class nodeBehaviour: MonoBehaviour
         public GameObject notUnlockedText;
         public Item item;
         public TalentNodeSO talent;
-        public TalentTreeState talentTreeState;
 
-        
+        private TalentTreeState GetTalentState()
+        {
+            TalentTreeRuntime runtime = TalentTreeRuntime.Instance;
+            if (runtime == null)
+            {
+                GameObject networkClient = GameObject.Find("NETWORKCLIENT");
+                if (networkClient != null)
+                {
+                    runtime = networkClient.GetComponent<TalentTreeRuntime>();
+                }
+            }
+
+            return runtime != null ? runtime.State : null;
+        }
 
         public void Update()
         {
@@ -43,7 +54,10 @@ public class nodeBehaviour: MonoBehaviour
 
         public void ShowInteract()
         {
-            if (talentTreeState.IsUnlocked(talent))
+            Debug.Log("Node requires talent: " + talent.nodeId);
+            Debug.Log("Copper unlocked? " + TalentTreeRuntime.Instance.State.IsUnlocked(talent));
+            TalentTreeState state = GetTalentState();
+            if (state != null && talent != null && state.IsUnlocked(talent))
             {
                 showFailedBool = false;
                 showInteractBool = true;
@@ -53,8 +67,6 @@ public class nodeBehaviour: MonoBehaviour
                 showFailedBool = true;
                 showInteractBool = false;
             }
-            
-            
             
         }
 }

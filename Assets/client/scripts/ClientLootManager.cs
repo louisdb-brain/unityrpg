@@ -21,33 +21,33 @@ public class ClientLootManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-
     public void SpawnLoot(LootSpawnPacket data)
     {
         if (activeLoot.ContainsKey(data.id))
             return;
 
-        Item itemData = itemDatabase.GetByName(data.itemName);
-        if (itemData == null )
+        Item itemData = itemDatabase.GetById(data.itemId);
+        if (itemData == null)
         {
-            Debug.LogWarning($"no item in itemdatabase {data.itemName}");
+            Debug.LogWarning($"no item in itemdatabase {data.itemId}");
             return;
         }
-        if(itemData.worldPrefab == null)
+
+        if (itemData.worldPrefab == null)
         {
-            Debug.LogWarning($"No prefab for item - {data.itemName}");
+            Debug.LogWarning($"No prefab for item - {data.itemId}");
             return;
         }
-        Debug.Log(data.itemName);
+
+        Debug.Log(data.itemId);
         GameObject go = Instantiate(
             itemData.worldPrefab,
             data.position.ToUnity(),
             Quaternion.identity
         );
 
-
         LootWorldObject lootObj = go.GetComponent<LootWorldObject>();
-        lootObj.Init(data.id, data.itemName,itemData.icon);
+        lootObj.Init(data.id, data.itemId, itemData.icon);
 
         activeLoot[data.id] = go;
     }

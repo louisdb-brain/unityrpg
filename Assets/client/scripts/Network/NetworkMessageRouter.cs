@@ -1,6 +1,3 @@
-using Unity.VisualScripting;
-using UnityEditor;
-using UnityEditor.Sprites;
 using UnityEngine;
 
 public static class NetworkMessageRouter
@@ -126,7 +123,7 @@ public static class NetworkMessageRouter
 
                 var data = JsonUtility.FromJson<LootSpawnPacket>(packet.data);
                 ClientLootManager.Instance.SpawnLoot(data);
-                Debug.Log(data.itemName+data.id);
+                Debug.Log(data.itemId + data.id);
                 break;
             }
 
@@ -161,7 +158,7 @@ public static class NetworkMessageRouter
                 foreach(string i in items)
                 {
                     ItemDatabase itemDatabase = InventoryManager.Instance.database;
-                    Item thisitem=itemDatabase.GetByName(i);
+                    Item thisitem=itemDatabase.GetById(i);
                     InventoryManager.Instance.AddItem(thisitem);
                 }
                 break;
@@ -181,7 +178,7 @@ public static class NetworkMessageRouter
                     return;
                 }
                 ItemDatabase itemDatabase = InventoryManager.Instance.database;
-                Item thisitem=itemDatabase.GetByName(data.name);
+                Item thisitem=itemDatabase.GetById(data.itemId);
                 InventoryManager.Instance.AddItem(thisitem);
                    
                 break;
@@ -200,8 +197,8 @@ public static class NetworkMessageRouter
                     Debug.LogError("not local player");
                     return;
                 }
-                
-                
+
+                InventoryManager.Instance.RemoveItem(data.itemId);
                 break;
             }
             default:

@@ -43,6 +43,7 @@ public class InventoryDragItem : MonoBehaviour, IBeginDragHandler, IDragHandler,
         eventData.pointerDrag = gameObject; // ✅ FIX
 
         SetRealIconAlpha(0f);
+        fromSlot.inventoryManager.SetDropBackdropActive(true);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -70,8 +71,11 @@ public class InventoryDragItem : MonoBehaviour, IBeginDragHandler, IDragHandler,
     {
         DestroyGhost();
 
-        // Always restore the real icon (UI will also refresh after swap/move)
-        SetRealIconAlpha(1f);
+        if (fromSlot != null && fromSlot.inventoryManager != null)
+        {
+            fromSlot.inventoryManager.SetDropBackdropActive(false);
+            fromSlot.inventoryManager.UpdateSlotUI(fromSlot.slotIndex);
+        }
 
         FromSlotIndex = -1;
     }

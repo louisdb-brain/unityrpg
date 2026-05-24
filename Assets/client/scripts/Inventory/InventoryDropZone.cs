@@ -10,6 +10,12 @@ public class InventoryDropZone : MonoBehaviour, IDropHandler
     public InventoryManager inventoryManager;
     public dropZoneType zone;
 
+    void Awake()
+    {
+        if (zone == dropZoneType.DROPZONE && inventoryManager != null)
+            inventoryManager.RegisterDropBackdrop(gameObject);
+    }
+
     public void OnDrop(PointerEventData eventData)
     {
         if (inventoryManager == null)

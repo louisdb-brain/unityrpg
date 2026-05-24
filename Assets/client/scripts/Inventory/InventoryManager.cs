@@ -19,6 +19,8 @@ public  class InventoryManager : MonoBehaviour
     public List<Item> SmithingItems = new List<Item>();
     public int SmithingItemCount = 5;
     public Transform SmithingItemParent;
+    [Header("Drop Zone")]
+    public GameObject dropBackdrop;
 
     
     // =========================
@@ -80,6 +82,7 @@ public  class InventoryManager : MonoBehaviour
             }
         }
         Debug.Log("InventoryManager STARTED (Test Mode)");
+        SetDropBackdropActive(false);
     }
 
     void Update()
@@ -132,9 +135,9 @@ public  class InventoryManager : MonoBehaviour
         return false;
     }
 
-    public bool RemoveItem(string itemName)
+    public bool RemoveItem(string itemId)
     {
-        int searchedIndex = SearchForItemByName(itemName);
+        int searchedIndex = SearchByItemId(itemId);
 
         if (searchedIndex == -1)
             return false;
@@ -142,16 +145,16 @@ public  class InventoryManager : MonoBehaviour
         inventory[searchedIndex].item = null;
         UpdateSlotUI(searchedIndex);
 
-        Debug.Log("Removed item: " + itemName + " from slot " + searchedIndex);
+        Debug.Log("Removed item: " + itemId + " from slot " + searchedIndex);
         return true;
     }
-    public int SearchForItemByName(string itemName)
+
+    public int SearchByItemId(string itemId)
     {
-        if (string.IsNullOrWhiteSpace(itemName))
+        if (string.IsNullOrWhiteSpace(itemId))
             return -1;
 
-        // Normalize once
-        string target = itemName.Trim();
+        string target = itemId.Trim();
 
         for (int i = 0; i < inventory.Length; i++)
         {
@@ -159,12 +162,12 @@ public  class InventoryManager : MonoBehaviour
             if (slotItem == null)
                 continue;
 
-            // ScriptableObject assets have a name (UnityEngine.Object.name)
-            if (string.Equals(slotItem.name, target, System.StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(slotItem.Id, target, System.StringComparison.OrdinalIgnoreCase))
                 return i;
         }
-        Debug.Log("item not found - cant remove "+itemName);
-        return -1; // Not found
+
+        Debug.Log("item not found - cant remove " + itemId);
+        return -1;
     }
    
 
@@ -259,20 +262,36 @@ public  class InventoryManager : MonoBehaviour
         int next = Mathf.Clamp(activeSlotIndex + delta, 0, slotCount - 1);
         SetActiveSlot(next);
     }
+
+    public void RegisterDropBackdrop(GameObject backdrop)
+    {
+        dropBackdrop = backdrop;
+        SetDropBackdropActive(false);
+    }
+
+    public void SetDropBackdropActive(bool visible)
+    {
+        if (dropBackdrop != null)
+            dropBackdrop.SetActive(visible);
+    }
+
     public void DropItem(int slotIndex)
     {
-        Item item = Items[slotIndex];
+        Item item = inventory[slotIndex].item;
         if (item == null)
             return;
-    
-        // 🔥 game logic here
-        // spawn loot, notify server, etc.
+
+        if (PlayerManager.Instance == null || string.IsNullOrEmpty(PlayerManager.Instance.localPlayerId))
+        {
+            Debug.LogWarning("[InventoryManager] Cannot drop item — local player not connected.");
+            return;
+        }
 
         NetworkClient.Instance.Send("player-droploot", new dropInventoryLootPacket
         {
-            itemName = Items[slotIndex].itemName,
+            itemId = item.Id,
         });
-        Items[slotIndex] = null;
+        inventory[slotIndex].item = null;
         UpdateSlotUI(slotIndex);
     }
 

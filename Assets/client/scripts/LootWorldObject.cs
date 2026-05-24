@@ -1,11 +1,10 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class LootWorldObject : MonoBehaviour
 {
     [Header("Runtime Data")]
     public string lootId;
-    public string itemName;
+    public string itemId;
 
     [Header("Bob Animation")]
     public float bobHeight = 0.25f;
@@ -19,10 +18,10 @@ public class LootWorldObject : MonoBehaviour
         startPos = transform.position;
     }
 
-    public void Init(string id, string name,Sprite Icon)
+    public void Init(string id, string itemIdValue, Sprite Icon)
     {
         lootId = id;
-        itemName = name;
+        itemId = itemIdValue;
         gameObject.GetComponent<SpriteRenderer>().sprite = Icon;
 
     }

@@ -184,6 +184,15 @@ export class player {
 
     getposition()
     {return this.position.clone();}
+
+    getDropPosition(distance = 2) {
+        const pos = this.position.clone();
+        if (this.angle == null) return pos;
+        pos.x += Math.sin(this.angle) * distance;
+        pos.z += Math.cos(this.angle) * distance;
+        return pos;
+    }
+
     getLevel()
     {
         return this.level;

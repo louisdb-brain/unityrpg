@@ -7,7 +7,6 @@ public class ItemDatabase : ScriptableObject
 {
     public List<Item> allItems = new List<Item>();
 
-    // Fast lookup by name (JSON / server safe)
     private Dictionary<string, Item> lookup;
 
     public void BuildLookup()
@@ -22,33 +21,40 @@ public class ItemDatabase : ScriptableObject
                 continue;
             }
 
-            if (lookup.ContainsKey(item.name))
+            string key = item.Id;
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                Debug.LogError($"Item '{item.name}' has no itemId", item);
+                continue;
+            }
+
+            if (lookup.ContainsKey(key))
             {
                 Debug.LogError(
-                    $"Duplicate item name '{item.name}' in ItemDatabase. Names must be unique.",
+                    $"Duplicate itemId '{key}' in ItemDatabase.",
                     item
                 );
                 continue;
             }
 
-            lookup.Add(item.name, item);
+            lookup.Add(key, item);
         }
     }
 
-    public Item GetByName(string itemName)
+    public Item GetById(string itemId)
     {
         if (lookup == null)
             BuildLookup();
 
-        if (string.IsNullOrEmpty(itemName))
+        if (string.IsNullOrEmpty(itemId))
         {
-            Debug.LogError("GetByName called with null or empty itemName");
+            Debug.LogError("GetById called with null or empty itemId");
             return null;
         }
 
-        if (!lookup.TryGetValue(itemName, out Item found))
+        if (!lookup.TryGetValue(itemId, out Item found))
         {
-            Debug.LogWarning($"Item not found in database: '{itemName}'");
+            Debug.LogWarning($"Item not found in database: '{itemId}'");
             return null;
         }
 
