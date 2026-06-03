@@ -29,8 +29,9 @@ export class player {
         this.followTarget="";
         this.targetObject=null;
         this.follow=false;
-        this.fistWeapon={name:"",power:"0",speed:3};
+        this.fistWeapon={name:"",power:0,speed:3};
         this.weapon=this.fistWeapon;
+        this.equipment = { weapon: null, helmet: null, chest: null, legs: null, offhand: null };
         this.skillLevels={
             ADVENTURING:10,
             WOODCUTTING:10,
@@ -57,21 +58,49 @@ export class player {
 
     equipWeapon(data){
         this.weapon={name:data.name,power:data.attack,speed:data.speed};
-        const payload={
-            name:data.name,
-            id:this.id
-        }
-        this.emit("weapon-sprite",payload);
-        //console.log(payload);
     }
     unequipWeapon()
     {
         this.weapon=this.fistWeapon;
-        const payload={
-            name:"fist",
-            id:this.id
+    }
+
+    equipItem(slot, { itemId, power }) {
+        const validSlots = ["weapon", "helmet", "chest", "legs", "offhand"];
+        if (!validSlots.includes(slot))
+            return false;
+
+        if (!itemId) {
+            return this.unequipItem(slot);
         }
-        this.emit("weapon-sprite",payload);
+
+        if (!this.inventory.getItems().includes(itemId))
+            return false;
+
+        this.equipment[slot] = itemId;
+        if (slot === "weapon") {
+            this.weapon = { name: itemId, power: Number(power) || 0, speed: 3 };
+        }
+        return true;
+    }
+
+    unequipItem(slot) {
+        if (!Object.prototype.hasOwnProperty.call(this.equipment, slot))
+            return false;
+
+        this.equipment[slot] = null;
+        if (slot === "weapon")
+            this.weapon = this.fistWeapon;
+        return true;
+    }
+
+    getEquipment() {
+        return {
+            weaponId: this.equipment.weapon ?? "",
+            helmetId: this.equipment.helmet ?? "",
+            chestId: this.equipment.chest ?? "",
+            legsId: this.equipment.legs ?? "",
+            offhandId: this.equipment.offhand ?? "",
+        };
     }
     update(delta) {
 

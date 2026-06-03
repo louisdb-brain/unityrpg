@@ -98,4 +98,33 @@ public class PlayerManager : MonoBehaviour
         return player as LocalPlayer;
     }
 
+    public PlayerBase GetPlayer(string id)
+    {
+        players.TryGetValue(id, out var player);
+        return player;
+    }
+
+    public void ApplyEquipmentUpdate(EquipmentUpdatePacket data)
+    {
+        if (data == null || string.IsNullOrEmpty(data.playerId))
+            return;
+
+        if (!players.TryGetValue(data.playerId, out var player))
+            return;
+
+        var visual = player.GetComponent<PlayerEquipmentVisual>();
+        if (visual == null)
+            visual = player.gameObject.AddComponent<PlayerEquipmentVisual>();
+
+        Sprite weaponSprite = null;
+        if (!string.IsNullOrEmpty(data.weaponId) && InventoryManager.Instance != null)
+        {
+            Item item = InventoryManager.Instance.database.GetById(data.weaponId);
+            if (item != null)
+                weaponSprite = item.icon;
+        }
+
+        visual.SetWeaponSprite(weaponSprite);
+    }
+
 }

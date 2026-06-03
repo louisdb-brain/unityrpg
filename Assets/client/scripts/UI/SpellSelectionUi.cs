@@ -57,6 +57,9 @@ public class SpellSelectionUi : MonoBehaviour
     // =========================
     void HandleHotkeys()
     {
+        if (QuickSlotManager.Instance != null)
+            return;
+
         for (int i = 0; i < spellDatabase.spells.Count && i < 9; i++)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1 + i))

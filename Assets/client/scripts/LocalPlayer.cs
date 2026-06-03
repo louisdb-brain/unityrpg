@@ -20,12 +20,15 @@ public class LocalPlayer : PlayerBase
 
     [Header("Spells")]
     public SpellPrototype activeSpell;
+    
+    private PlayerAnimation playerAnimation;
 
     public Vector3 LastMoveDirection { get; private set; } = Vector3.forward;
 
     void Start()
     {
         NetworkClient.Instance.Send("request-inventory",new PlayerIdPacket { playerId = playerId });
+        playerAnimation = GetComponent<PlayerAnimation>();
     }
 
     void Update()
@@ -39,6 +42,8 @@ public class LocalPlayer : PlayerBase
         if (Input.GetKeyDown(KeyCode.Space) && canCast)
         {
             CastSpell();
+            playerAnimation.attack();
+            Debug.Log("attacked");
             hasAttacked = true;
             combo++;
             if (DamagePopupSpawner.Instance != null)

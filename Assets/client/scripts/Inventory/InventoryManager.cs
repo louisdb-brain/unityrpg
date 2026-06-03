@@ -144,9 +144,47 @@ public  class InventoryManager : MonoBehaviour
 
         inventory[searchedIndex].item = null;
         UpdateSlotUI(searchedIndex);
+        QuickSlotManager.Instance?.OnBagSlotChanged(searchedIndex);
 
         Debug.Log("Removed item: " + itemId + " from slot " + searchedIndex);
         return true;
+    }
+
+    public Item GetItemAt(int index)
+    {
+        if (index < 0 || index >= inventory.Length)
+            return null;
+        return inventory[index].item;
+    }
+
+    public void EquipFromBag(int slotIndex)
+    {
+        Item item = GetItemAt(slotIndex);
+        if (item == null || item is not weapon w)
+            return;
+
+        if (PlayerManager.Instance == null || string.IsNullOrEmpty(PlayerManager.Instance.localPlayerId))
+            return;
+
+        NetworkClient.Instance.Send("equip-item", new EquipItemPacket
+        {
+            slot = "weapon",
+            itemId = item.Id,
+            power = w.power
+        });
+    }
+
+    public void UnequipWeapon()
+    {
+        if (PlayerManager.Instance == null || string.IsNullOrEmpty(PlayerManager.Instance.localPlayerId))
+            return;
+
+        NetworkClient.Instance.Send("equip-item", new EquipItemPacket
+        {
+            slot = "weapon",
+            itemId = "",
+            power = 0
+        });
     }
 
     public int SearchByItemId(string itemId)
@@ -226,7 +264,9 @@ public  class InventoryManager : MonoBehaviour
         UpdateSlotUI(from);
         UpdateSlotUI(to);
         SetActiveSlot(to);
-        
+
+        QuickSlotManager.Instance?.OnBagSlotChanged(from);
+        QuickSlotManager.Instance?.OnBagSlotChanged(to);
     }
 
 
@@ -293,6 +333,7 @@ public  class InventoryManager : MonoBehaviour
         });
         inventory[slotIndex].item = null;
         UpdateSlotUI(slotIndex);
+        QuickSlotManager.Instance?.OnBagSlotChanged(slotIndex);
     }
 
 }

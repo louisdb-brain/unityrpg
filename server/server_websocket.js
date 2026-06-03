@@ -244,6 +244,32 @@ function handleClientMessage(ws, msg) {
             break;
 
         }
+        case "equip-item": {
+            const data = typeof msg.data === "string"
+                ? JSON.parse(msg.data)
+                : msg.data;
+            if (!data?.slot)
+                break;
+
+            const player = playermanager.getPlayer(ws.id);
+            if (!player)
+                break;
+
+            const ok = data.itemId
+                ? player.equipItem(data.slot, { itemId: data.itemId, power: data.power })
+                : player.unequipItem(data.slot);
+
+            if (!ok) {
+                console.warn("equip-item failed", ws.id, data);
+                break;
+            }
+
+            net.broadcast("equipment-update", {
+                playerId: ws.id,
+                ...player.getEquipment(),
+            });
+            break;
+        }
 
         default:
             console.warn("Unknown message type:", msg.type);

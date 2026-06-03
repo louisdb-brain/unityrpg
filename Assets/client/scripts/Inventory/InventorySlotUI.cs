@@ -46,6 +46,13 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IDropHandler
         var draggedGO = eventData.pointerDrag;
         if (draggedGO == null) return;
 
+        var quickDrag = draggedGO.GetComponent<QuickSlotDragItem>();
+        if (quickDrag != null && quickDrag.FromQuickSlotIndex >= 0)
+        {
+            QuickSlotManager.Instance?.OnQuickSlotDroppedOnBag(quickDrag.FromQuickSlotIndex);
+            return;
+        }
+
         var drag = draggedGO.GetComponent<InventoryDragItem>();
         if (drag == null) return;
 
@@ -54,11 +61,7 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IDropHandler
 
         if (from == to) return;
 
-        // swap/move in the DATA model
         inventoryManager.MoveItem(from, to);
-
-        // UI refresh (your MoveItem likely already calls UpdateSlotUI,
-        // but calling refresh here is safe if it doesn't)
         inventoryManager.UpdateSlotUI(from);
         inventoryManager.UpdateSlotUI(to);
     }

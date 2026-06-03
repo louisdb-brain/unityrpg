@@ -201,6 +201,12 @@ public static class NetworkMessageRouter
                 InventoryManager.Instance.RemoveItem(data.itemId);
                 break;
             }
+            case "equipment-update":
+            {
+                var data = JsonUtility.FromJson<EquipmentUpdatePacket>(packet.data);
+                PlayerManager.Instance.ApplyEquipmentUpdate(data);
+                break;
+            }
             default:
                 Debug.LogWarning("Unknown WS message type: " + packet.type);
                 break;
