@@ -1,8 +1,5 @@
 import * as THREE from 'three';
-import {gamestateClass}     from './server_gamestate.js';
 import {inventory} from "./inventory.js";
-import {levelManager} from "./levelManager.js";
-import {rand} from "three/tsl";
 export class player {
     constructor(pId,emitCallback,position = { x: 0, y: 0, z: 0 },level,pName) {
 
