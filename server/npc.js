@@ -1,6 +1,7 @@
 // SERVER NPC
 import * as THREE from "three";
 import crypto from "crypto";
+import { collisionWorld } from "./collisionWorld.js";
 
 const NPCCombatState = {
     IDLE: "idle",
@@ -76,6 +77,7 @@ export class npc {
 
         this.cooldown = 50;
         this.angle = 0;
+        this.scene = "mandolintown";
 
         // === COMBAT STATE ===
         this.combatState = NPCCombatState.IDLE;
@@ -159,7 +161,9 @@ export class npc {
     move(delta) {
         // apply knockback first
         if (this.knockback.lengthSq() > 0.0001) {
+            const from = this.position.clone();
             this.position.add(this.knockback.clone().multiplyScalar(delta));
+            this.position.copy(collisionWorld.resolveMove(from, this.position, 0.75, this.scene));
             this.knockback.multiplyScalar(this.knockbackDecay);
             this.detectionsphere.center.copy(this.position);
             return;
@@ -178,7 +182,9 @@ export class npc {
         if (distance > 0.1) {
             direction.normalize();
             const step = this.speed * delta;
+            const from = this.position.clone();
             this.position.add(direction.clone().multiplyScalar(step));
+            this.position.copy(collisionWorld.resolveMove(from, this.position, 0.75, this.scene));
             this.angle = Math.atan2(direction.x, direction.z);
         }
 

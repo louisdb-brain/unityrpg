@@ -215,5 +215,15 @@ public class LocalPlayer : PlayerBase
 
 
     public override void OnNetworkUpdate(Vector3 targetPos, float targetAngle) {}
-    public override void OnServerCorrection(Vector3 pos, float angle) {}
+
+    public override void OnServerCorrection(Vector3 pos, float angle)
+    {
+        transform.position = pos;
+
+        var rb = GetComponent<Rigidbody>();
+        if (rb != null)
+            rb.position = pos;
+
+        transform.rotation = Quaternion.Euler(0f, angle, 0f);
+    }
 }

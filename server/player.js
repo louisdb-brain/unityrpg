@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {inventory} from "./inventory.js";
+import {collisionWorld} from "./collisionWorld.js";
 export class player {
     constructor(pId,emitCallback,position = { x: 0, y: 0, z: 0 },level,pName) {
 
@@ -48,6 +49,7 @@ export class player {
         this.name=pName;
 
         this.level=level;
+        this.scene = "mandolintown";
 
         this.inventory=new inventory(this.id,this.emit,12);
         //this.equipWeapon({name:"mithrilsword",power:"10",speed:"2.5"})
@@ -128,7 +130,9 @@ export class player {
             angledirection.normalize();
             const moveStep = this.speed * delta;
 
+            const from = this.position.clone();
             this.position.add(movedirection.clone().multiplyScalar(moveStep));
+            this.position.copy(collisionWorld.resolveMove(from, this.position, 0.5, this.scene));
             this.angle = Math.atan2(angledirection.x, angledirection.z);
 
 

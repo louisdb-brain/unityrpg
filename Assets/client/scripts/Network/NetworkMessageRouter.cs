@@ -87,6 +87,20 @@ public static class NetworkMessageRouter
                 break;
             }
 
+            case "player-correction":
+            {
+                if (PlayerManager.Instance == null)
+                    return;
+
+                var correction = JsonUtility.FromJson<PlayerMovePacket>(packet.data);
+                PlayerManager.Instance.UpdatePlayerPos(
+                    PlayerManager.Instance.localPlayerId,
+                    new Vector3(correction.x, correction.y, correction.z),
+                    correction.angle
+                );
+                break;
+            }
+
 
             case "player-left":
             {

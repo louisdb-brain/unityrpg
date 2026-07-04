@@ -3,6 +3,7 @@ import { WebSocketServer } from "ws";
 import {npc} from "./npc.js";
 import {playermanager} from "./playermanager.js";
 import { dynamicObjectsManager } from "./dynamicObjectsManager.js";
+import { collisionWorld } from "./collisionWorld.js";
 import crypto from "crypto";
 
 
@@ -42,6 +43,7 @@ const net = { broadcast, sendTo };
 // GAMESTATE
 // --------------------
 const gamestate = new gamestateClass(net);
+collisionWorld.loadAll();
 gamestate.start();
 // TEST SPAWN GOBLIN
 for(let i=0;i<10;i++){
@@ -130,9 +132,23 @@ function handleClientMessage(ws, msg) {
             const player = playermanager.getPlayer(ws.id);
             if (!player) return;
 
-            player.position.set(x, y, z);
-            player.targetPosition.set(x,y,z);
+            const from = player.position.clone();
+            const resolved = collisionWorld.resolveMove(from, { x, y, z }, 0.5, player.scene);
+            player.position.copy(resolved);
+            player.targetPosition.copy(resolved);
             player.angle = angle;
+
+            const dx = resolved.x - x;
+            const dz = resolved.z - z;
+            const dy = resolved.y - y;
+            if (dx * dx + dz * dz + dy * dy > 0.0001) {
+                sendTo(ws, "player-correction", JSON.stringify({
+                    x: resolved.x,
+                    y: resolved.y,
+                    z: resolved.z,
+                    angle,
+                }));
+            }
 
             break;
         }
