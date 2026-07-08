@@ -159,19 +159,31 @@ public  class InventoryManager : MonoBehaviour
 
     public void EquipFromBag(int slotIndex)
     {
+        Debug.Log("EQUIP FROM BAG" + slotIndex);
         Item item = GetItemAt(slotIndex);
-        if (item == null || item is not weapon w)
-            return;
+        if (item == null  )return;
 
         if (PlayerManager.Instance == null || string.IsNullOrEmpty(PlayerManager.Instance.localPlayerId))
             return;
-
-        NetworkClient.Instance.Send("equip-item", new EquipItemPacket
+        
+        if (item is not weapon w)
         {
-            slot = "weapon",
-            itemId = item.Id,
-            power = w.power
-        });
+            AddItem(item);
+        }
+        else
+        {
+            RemoveItem(item.Id);
+            NetworkClient.Instance.Send("equip-item", new EquipItemPacket
+            {
+                slot = "weapon",
+                itemId = item.Id,
+                power = 500 //w.power
+            });
+        }
+
+        
+        
+        
     }
 
     public void UnequipWeapon()
@@ -239,14 +251,19 @@ public  class InventoryManager : MonoBehaviour
         Item thisitem = inventory[index].item;
         
         //don't rightclick empty items
-        if( thisitem== null)
-            return;
+        if( thisitem== null)return;
+            
+        
         bool isbase=false;
-        if (thisitem is buildingItem build && build.properties.HasFlag(BuildPropertyType.Base))
+        /*if (thisitem is buildingItem build && build.properties.HasFlag(BuildPropertyType.Base))
         {
             isbase = true;
-        }
-        ConstructionPlacer.Instance.StartPlacing(thisitem.icon,isbase);
+        }*//*
+        if( thisitem is food fooditem )
+        {
+            Debug.Log("EATING " fooditem.name);
+        }*/
+        //ConstructionPlacer.Instance.StartPlacing(thisitem.icon,isbase);
         // Right-click = start building
         
     }
@@ -335,5 +352,7 @@ public  class InventoryManager : MonoBehaviour
         UpdateSlotUI(slotIndex);
         QuickSlotManager.Instance?.OnBagSlotChanged(slotIndex);
     }
+
+    
 
 }

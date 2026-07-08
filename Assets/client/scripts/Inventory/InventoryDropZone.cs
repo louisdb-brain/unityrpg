@@ -40,6 +40,10 @@ public class InventoryDropZone : MonoBehaviour, IDropHandler
                 Debug.Log("DROPPED IN DROPZONE");
                 inventoryManager.DropItem(fromSlot);
                 break;
+            case dropZoneType.WEAPON:
+                Debug.Log("DROPPED IN WEAPON");
+                inventoryManager.EquipFromBag(fromSlot);
+                break;
             
             
         }

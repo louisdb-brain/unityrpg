@@ -53,12 +53,13 @@ for(let i=0;i<10;i++){
         "goblin"+i.toString(),
         net,
         gamestate.objectManager,
-        "manaherb",
+        "weapon_copper_axe",
         "onion",
         1
     );
     gamestate.addnpc(goblin);
 }
+gamestate.objectManager.spawnLoot("weapon_copper_sword","weapon_copper_sword",{x:0,y:0,z:0},1);
 
 
 
