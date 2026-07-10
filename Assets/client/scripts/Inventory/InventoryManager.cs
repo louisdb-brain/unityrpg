@@ -180,9 +180,24 @@ public  class InventoryManager : MonoBehaviour
                 power = 500 //w.power
             });
         }
+    }
 
+    public void CreateSmithing(int slotIndex)
+    {
+        Item item = GetItemAt(slotIndex);
+        if(item == null) return;
+        if (PlayerManager.Instance == null || string.IsNullOrEmpty(PlayerManager.Instance.localPlayerId))
+            return;
+        SmithingUi.Instance.CreateIngredient(item);
         
-        
+        if (item is not smithing s)
+        {
+            return;
+        }
+        else
+        {
+            
+        }
         
     }
 
